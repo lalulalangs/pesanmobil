@@ -2,8 +2,10 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -27,12 +29,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const toggleLocale = () => {
+  const toggleLocale = useCallback(() => {
     setLocale((prev) => (prev === "id" ? "en" : "id"));
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({ locale, setLocale, toggleLocale }),
+    [locale, toggleLocale]
+  );
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, toggleLocale }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Lenis from "lenis";
 
 export function SmoothScroll() {
   useEffect(() => {
@@ -11,15 +10,22 @@ export function SmoothScroll() {
 
     if (prefersReducedMotion) return;
 
-    const lenis = new Lenis({
-      autoRaf: true,
-      smoothWheel: true,
-      anchors: true,
-      duration: 1.1,
+    let isCancelled = false;
+    let instance: { destroy: () => void } | null = null;
+
+    import("lenis").then(({ default: Lenis }) => {
+      if (isCancelled) return;
+      instance = new Lenis({
+        autoRaf: true,
+        smoothWheel: true,
+        anchors: true,
+        duration: 1.1,
+      });
     });
 
     return () => {
-      lenis.destroy();
+      isCancelled = true;
+      instance?.destroy();
     };
   }, []);
 

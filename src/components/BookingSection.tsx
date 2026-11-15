@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { memo, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   ArrowRight,
   Calendar,
@@ -100,7 +100,7 @@ const TIME_CONTENT_CLASS =
 const TIME_ITEM_CLASS =
   "rounded-lg py-1.5 pl-2.5 pr-8 text-[13px] text-[var(--fg)] focus:bg-[#f4f4f5] focus:text-[var(--fg)] data-[selected]:bg-[#009cde]/10 data-[selected]:text-[#0077ae] data-[selected]:font-medium";
 
-function TimeSelectItems() {
+const TimeSelectItems = memo(function TimeSelectItems() {
   return (
     <>
       {TIME_OPTIONS.map((time) => (
@@ -110,7 +110,7 @@ function TimeSelectItems() {
       ))}
     </>
   );
-}
+});
 
 function getOffsetDateInput(daysFromToday: number): string {
   const date = new Date();

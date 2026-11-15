@@ -36,25 +36,15 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 pt-3 sm:pt-4 font-sans transition-all duration-200">
+    <header className="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 pt-3 sm:pt-4 font-sans">
       <nav
         aria-label={locale === "id" ? "Navigasi utama" : "Main navigation"}
-        className={`relative overflow-hidden mx-auto max-w-[1200px] transition-all duration-200 ${
+        className={`relative overflow-hidden mx-auto max-w-[1200px] transition-[background-color,border-color,box-shadow,padding,border-radius] duration-200 ${
           isScrolled
-            ? "rounded-full bg-white/80 backdrop-blur-md border border-[var(--border)]/70 shadow-[0_2px_16px_rgba(29,29,31,0.06)] px-5 sm:px-6 py-2"
+            ? "rounded-full bg-white/95 md:bg-white/85 md:backdrop-blur-md border border-[var(--border)]/70 shadow-[0_2px_16px_rgba(29,29,31,0.06)] px-5 sm:px-6 py-2"
             : "rounded-none bg-transparent border border-transparent px-1 sm:px-2 py-2"
         }`}
       >
-        {/* Subtle film-grain overlay when detached as floating pill */}
-        <span
-          aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 transition-opacity duration-200 ${
-            isScrolled ? "opacity-[0.08]" : "opacity-0"
-          }`}
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          }}
-        />
         <div className="relative z-10 flex items-center justify-between gap-4">
           {/* Left: Brand Logo */}
           <Link

@@ -1,10 +1,17 @@
 "use client";
 
+import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import { Hazeglow, parseConfig, type GradientConfig } from "hazeglow";
+import { parseConfig, type GradientConfig } from "hazeglow";
 import { ArrowRight } from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 import { Button } from "@/components/ui/button";
+
+const Hazeglow = dynamic(
+  () => import("hazeglow").then((mod) => mod.Hazeglow),
+  { ssr: false }
+);
 
 export interface HeroCopy {
   title?: string;
@@ -77,6 +84,42 @@ export function HeroSection({
   children,
 }: HeroSectionProps) {
   const { locale } = useLanguage();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => setPrefersReducedMotion(mediaQuery.matches);
+    const frameId = requestAnimationFrame(updateMotion);
+    mediaQuery.addEventListener("change", updateMotion);
+
+    const target = sectionRef.current;
+    let observer: IntersectionObserver | null = null;
+    if (target) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          setIsVisible(entry.isIntersecting);
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(target);
+    }
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      mediaQuery.removeEventListener("change", updateMotion);
+      observer?.disconnect();
+    };
+  }, []);
+
+  const effectiveConfig = useMemo<GradientConfig>(() => {
+    if (!isVisible || prefersReducedMotion) {
+      return { ...backgroundConfig, speed: 0 };
+    }
+    return backgroundConfig;
+  }, [backgroundConfig, isVisible, prefersReducedMotion]);
+
   const activeCopy = localizedCopy?.[locale];
   const resolvedTitle = activeCopy?.title ?? title;
   const resolvedSubtitle = activeCopy?.subtitle ?? subtitle;
@@ -85,11 +128,12 @@ export function HeroSection({
 
   return (
     <section
+      ref={sectionRef}
       aria-label="Hero"
       className={`relative isolate w-full h-[100svh] min-h-[100svh] overflow-hidden flex items-end justify-start bg-[#fefefe] font-sans pt-20 pb-8 sm:pt-28 sm:pb-16 lg:pb-20 ${className}`}
     >
       <Hazeglow
-        config={backgroundConfig}
+        config={effectiveConfig}
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
       />
 
