@@ -203,7 +203,7 @@ export function BookingSection() {
     <section
       id="booking"
       aria-label={copy.sectionLabel}
-      className="w-full bg-[var(--surface)] py-12 sm:py-20 font-sans"
+      className="w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
     >
       <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
         <form
