@@ -1,10 +1,6 @@
-import dynamic from "next/dynamic";
+import { BookingSection } from "@/components/BookingSection";
 import { FleetSection } from "@/components/FleetSection";
 import { HeroSection } from "@/components/HeroSection";
-
-const BookingSection = dynamic(() =>
-  import("@/components/BookingSection").then((mod) => mod.BookingSection)
-);
 
 const whatsappNumber =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
