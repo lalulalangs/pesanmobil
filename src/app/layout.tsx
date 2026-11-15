@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { Navbar } from "@/components/Navbar";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
 
 const geist = Geist({
@@ -49,6 +50,7 @@ export default function RootLayout({
     <html lang="id" className={`${geist.variable} ${switzer.variable} font-sans`}>
       <body className="font-sans antialiased bg-[var(--bg)] text-[var(--fg)] selection:bg-[var(--brand)] selection:text-white">
         <LanguageProvider>
+          <SmoothScroll />
           <Navbar />
           {children}
         </LanguageProvider>

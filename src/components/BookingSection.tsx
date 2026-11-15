@@ -279,6 +279,7 @@ export function BookingSection() {
                     side="bottom"
                     align="end"
                     sideOffset={8}
+                    data-lenis-prevent
                     className={TIME_CONTENT_CLASS}
                   >
                     <TimeSelectItems />
@@ -338,6 +339,7 @@ export function BookingSection() {
                     side="bottom"
                     align="end"
                     sideOffset={8}
+                    data-lenis-prevent
                     className={TIME_CONTENT_CLASS}
                   >
                     <TimeSelectItems />
