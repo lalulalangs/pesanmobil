@@ -1,4 +1,5 @@
 import { BookingSection } from "@/components/BookingSection";
+import { FaqSection } from "@/components/FaqSection";
 import { FleetSection } from "@/components/FleetSection";
 import { HeroSection } from "@/components/HeroSection";
 import { MediaGallerySection } from "@/components/MediaGallerySection";
@@ -49,6 +50,7 @@ export default function Home() {
       <FleetSection />
       <BookingSection />
       <MediaGallerySection />
+      <FaqSection />
     </main>
   );
 }
