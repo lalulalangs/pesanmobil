@@ -146,7 +146,7 @@ export function MediaGallerySection() {
     <section
       id="galeri"
       aria-label={copy.sectionLabel}
-      className="w-full bg-[var(--surface)] py-12 sm:py-20 font-sans"
+      className="w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
     >
       <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
         <h2 className="mb-6 sm:mb-8 text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
