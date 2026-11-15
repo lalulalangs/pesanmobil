@@ -130,7 +130,7 @@ export function HeroSection({
     <section
       ref={sectionRef}
       aria-label="Hero"
-      className={`relative isolate w-full h-[100svh] min-h-[100svh] overflow-hidden flex items-end justify-start bg-[#fefefe] font-sans pt-20 pb-8 sm:pt-28 sm:pb-16 lg:pb-20 ${className}`}
+      className={`relative isolate w-full h-[100svh] min-h-[100svh] overflow-hidden flex items-end justify-start bg-[var(--bg)] font-sans pt-20 pb-8 sm:pt-28 sm:pb-16 lg:pb-20 ${className}`}
     >
       <Hazeglow
         config={effectiveConfig}
@@ -140,7 +140,7 @@ export function HeroSection({
       {/* Seamless bottom fade into the next section background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28 sm:h-40 bg-gradient-to-b from-transparent to-[var(--bg)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 sm:h-56 bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,rgba(255,255,255,0.65)_55%,#ffffff_100%)]"
       />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8">

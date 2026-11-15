@@ -258,25 +258,21 @@ export function BookingSection() {
       aria-label={copy.sectionLabel}
       className="relative isolate overflow-hidden w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
     >
-      <div
+      <Image
+        src={bookingBg}
+        alt=""
+        fill
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-4 inset-x-4 sm:inset-x-8 mx-auto max-w-[1080px] -z-20"
-      >
-        <Image
-          src={bookingBg}
-          alt=""
-          fill
-          sizes="(max-width: 1080px) 100vw, 1080px"
-          className="object-contain object-center"
-        />
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,#ffffff_0%,rgba(255,255,255,0.88)_18%,rgba(255,255,255,0)_50%,rgba(255,255,255,0.88)_82%,#ffffff_100%)]"
+        sizes="100vw"
+        className="pointer-events-none -z-20 object-cover object-center"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,#ffffff_0%,rgba(255,255,255,0)_24%,rgba(255,255,255,0)_76%,#ffffff_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,#ffffff_0%,rgba(255,255,255,0.88)_20%,rgba(255,255,255,0)_50%,rgba(255,255,255,0.88)_80%,#ffffff_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,#ffffff_0%,rgba(255,255,255,0)_18%,rgba(255,255,255,0)_82%,#ffffff_100%)]"
       />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8">
