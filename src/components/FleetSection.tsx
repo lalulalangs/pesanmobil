@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Briefcase, Settings2, Users } from "lucide-react";
+import { ArrowRight, Briefcase, Settings2, Users } from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 import { Button } from "@/components/ui/button";
 
@@ -235,9 +235,10 @@ export function FleetSection() {
             variant="default"
             nativeButton={false}
             render={<Link href="/mobil" />}
-            className="h-10 w-full sm:w-auto rounded-full px-6 text-[14px] font-medium ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
+            className="h-10 w-full sm:w-auto gap-2 rounded-full px-6 text-[14px] font-medium ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
           >
-            {copy.seeMore}
+            <span>{copy.seeMore}</span>
+            <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
           </Button>
         </div>
       </div>
