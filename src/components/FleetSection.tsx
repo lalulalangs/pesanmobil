@@ -232,10 +232,10 @@ export function FleetSection() {
 
         <div className="mt-10 sm:mt-12 flex justify-center">
           <Button
-            variant="outline"
+            variant="default"
             nativeButton={false}
             render={<Link href="/mobil" />}
-            className="h-10 w-full sm:w-auto rounded-lg border-[var(--border)] bg-white px-5 text-[14px] font-medium text-[var(--fg)] hover:bg-[var(--surface)] shadow-[0_1px_2px_rgba(29,29,31,0.04)]"
+            className="h-10 w-full sm:w-auto rounded-full px-6 text-[14px] font-medium ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
           >
             {copy.seeMore}
           </Button>
