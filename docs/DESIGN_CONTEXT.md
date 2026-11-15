@@ -16,7 +16,7 @@ Antarmuka `pesanmobil.com` dirancang sebagai etalase katalog sewa mobil dan moto
 - High-contrast action orange (`#f97316` with `#1d1d1f` label, 6.00:1 WCAG AA) exclusively for WhatsApp conversion CTAs
 - Clean `Helvetica` typography stack across display headings and UI controls
 - Purposeful border radius tiers: `8px` inputs/controls, `12px` buttons/chips, `16px` cards, `9999px` pill CTAs
-- React Bits interactive components (`@react-bits`) adapted to project tokens and `prefers-reduced-motion`
+- shadcn/ui components (`src/components/ui/`) adapted to project tokens and `prefers-reduced-motion`
 
 ## 2. Color Palette & Roles
 
@@ -55,5 +55,5 @@ Antarmuka `pesanmobil.com` dirancang sebagai etalase katalog sewa mobil dan moto
 ## 4. Component & Accessibility Rules
 - Contrast minimum: `4.5:1` for normal text, `3:1` for large text and UI boundaries (WCAG AA).
 - Never place white text over `#f97316` (2.80:1) or `#38bdf8` (2.14:1); pair both with `#1d1d1f`.
-- Interactive components from React Bits (`@react-bits`) and `src/components/ui/` must inherit `--bg`, `--surface`, `--fg`, `--brand`, `--cta`, and respect `prefers-reduced-motion`.
+- Components in `src/components/ui/` (shadcn/ui) must inherit `--bg`, `--surface`, `--fg`, `--brand`, `--cta`, and respect `prefers-reduced-motion`.
 - Respect the 30 anti-slop rules in `.agents/rules/anti-slop.md`.

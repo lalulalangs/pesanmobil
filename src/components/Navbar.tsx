@@ -22,12 +22,12 @@ const SCROLL_THRESHOLD_PX = 16;
 export function Navbar() {
   const pathname = usePathname();
   const { locale, setLocale } = useLanguage();
-  const [isSticky, setIsSticky] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      setIsSticky(window.scrollY > SCROLL_THRESHOLD_PX);
+      setIsScrolled(window.scrollY > SCROLL_THRESHOLD_PX);
     };
 
     onScroll();
@@ -36,67 +36,68 @@ export function Navbar() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-40 font-sans transition-all duration-200 ${
-        isSticky ? "px-0 pt-0" : "px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6"
-      }`}
-    >
+    <header className="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 pt-3 sm:pt-4 font-sans transition-all duration-200">
       <nav
         aria-label={locale === "id" ? "Navigasi utama" : "Main navigation"}
-        className={`mx-auto backdrop-blur-md transition-all duration-200 ${
-          isSticky
-            ? "w-full max-w-none rounded-none bg-white/95 border-b border-[var(--border)] px-4 sm:px-6 lg:px-8 py-3"
-            : "max-w-[1024px] rounded-full bg-white/80 border border-[var(--border)] px-4 sm:px-6 py-3"
+        className={`relative overflow-hidden mx-auto max-w-[1200px] transition-all duration-200 ${
+          isScrolled
+            ? "rounded-full bg-white/80 backdrop-blur-md border border-[var(--border)]/70 shadow-[0_2px_16px_rgba(29,29,31,0.06)] px-5 sm:px-6 py-2"
+            : "rounded-none bg-transparent border border-transparent px-1 sm:px-2 py-2"
         }`}
       >
-        <div
-          className={`flex items-center justify-between gap-4 ${
-            isSticky ? "max-w-[1024px] mx-auto" : "w-full"
+        {/* Subtle film-grain overlay when detached as floating pill */}
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 transition-opacity duration-200 ${
+            isScrolled ? "opacity-[0.08]" : "opacity-0"
           }`}
-        >
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="relative z-10 flex items-center justify-between gap-4">
           {/* Left: Brand Logo */}
           <Link
             href="/"
             onClick={() => setMobileOpen(false)}
-            className="shrink-0 flex items-center rounded-full px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
+            className="shrink-0 flex items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
           >
             <Image
               src="/logo.png"
               alt="pesanmobil.com"
-              width={160}
-              height={33}
+              width={140}
+              height={29}
               priority
-              className="h-7 sm:h-8 w-auto object-contain"
+              className="h-5 sm:h-7 w-auto object-contain"
             />
           </Link>
 
-          {/* Center: Navigation Links (Desktop) */}
-          <ul className="hidden md:flex items-center gap-8 text-[15px] font-medium">
-            {NAV_ITEMS.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`py-2 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 rounded ${
-                      active
-                        ? "text-[var(--brand-link)] font-semibold"
-                        : "text-[var(--fg)] hover:text-[var(--brand-link)]"
-                    }`}
-                  >
-                    {item.label[locale]}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          {/* Right: Links + Language Switcher + Mobile Toggle */}
+          <div className="flex items-center gap-5 sm:gap-6">
+            <ul className="hidden md:flex items-center gap-6 text-[14px] font-medium">
+              {NAV_ITEMS.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`py-1 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 rounded ${
+                        active
+                          ? "text-[var(--fg)] font-semibold"
+                          : "text-[var(--fg-2)] hover:text-[var(--fg)]"
+                      }`}
+                    >
+                      {item.label[locale]}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
 
-          {/* Right: Language Switcher (ID / EN) + Mobile Menu Toggle */}
-          <div className="flex items-center gap-2">
             <div
               role="group"
               aria-label={locale === "id" ? "Pilih bahasa" : "Select language"}
-              className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface)] p-1"
+              className="inline-flex items-center rounded-full border border-[var(--border)]/80 bg-[var(--surface)]/80 p-0.5"
             >
               {(["id", "en"] as const).map((lang) => {
                 const selected = locale === lang;
@@ -106,10 +107,10 @@ export function Navbar() {
                     type="button"
                     onClick={() => setLocale(lang)}
                     aria-pressed={selected}
-                    className={`min-w-[36px] min-h-[32px] px-3 py-1 rounded-full text-[13px] font-semibold uppercase tracking-wide transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
+                    className={`min-w-[32px] min-h-[26px] px-2.5 py-0.5 rounded-full text-[12px] font-semibold uppercase tracking-wide transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
                       selected
-                        ? "bg-[var(--brand-link)] text-white"
-                        : "text-[var(--fg)] hover:text-[var(--brand-link)]"
+                        ? "bg-white text-[var(--fg)] shadow-xs"
+                        : "text-[var(--muted-text)] hover:text-[var(--fg)]"
                     }`}
                   >
                     {lang.toUpperCase()}
@@ -131,11 +132,11 @@ export function Navbar() {
                     ? "Buka menu navigasi"
                     : "Open navigation menu"
               }
-              className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--border)] bg-white text-[var(--fg)] hover:bg-[var(--surface)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+              className="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--border)] bg-white/80 text-[var(--fg)] hover:bg-[var(--surface)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
             >
               {mobileOpen ? (
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -148,7 +149,7 @@ export function Navbar() {
                 </svg>
               ) : (
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -167,13 +168,7 @@ export function Navbar() {
 
       {/* Mobile Dropdown */}
       {mobileOpen && (
-        <div
-          className={`md:hidden mx-auto mt-2 backdrop-blur-md bg-white/95 border border-[var(--border)] p-4 flex flex-col gap-2 ${
-            isSticky
-              ? "rounded-none border-x-0"
-              : "max-w-[1024px] rounded-2xl"
-          }`}
-        >
+        <div className="md:hidden mx-auto max-w-[1200px] mt-2 backdrop-blur-md bg-white/95 border border-[var(--border)] rounded-2xl p-3 flex flex-col gap-1">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
             return (
@@ -181,10 +176,10 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`px-4 py-3 rounded-xl text-[16px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
+                className={`px-4 py-2.5 rounded-xl text-[15px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
                   active
-                    ? "bg-[var(--surface)] text-[var(--brand-link)] font-semibold"
-                    : "text-[var(--fg)] hover:bg-[var(--surface)]"
+                    ? "bg-[var(--surface)] text-[var(--fg)] font-semibold"
+                    : "text-[var(--fg-2)] hover:bg-[var(--surface)]"
                 }`}
               >
                 {item.label[locale]}

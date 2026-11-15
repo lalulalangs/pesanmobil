@@ -21,7 +21,7 @@
   --cta-hover: #fb923c;
   --cta-active: #ea580c;
   --cta-on: #1d1d1f;
-  --font-helvetica: Helvetica, "Helvetica Neue", Arial, sans-serif;
+  --font-primary: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
   /* shadcn/ui tokens mapped to pesanmobil.com design system */
   --background: #ffffff;
@@ -49,9 +49,10 @@
   --color-foreground: var(--fg);
   --color-surface: var(--surface);
   --color-accent: var(--brand);
-  --font-sans: var(--font-helvetica);
-  --font-display: var(--font-helvetica);
-  --font-heading: var(--font-helvetica);
+  --font-sans: var(--font-primary);
+  --font-display: var(--font-primary);
+  --font-heading: var(--font-primary);
+  --font-button: var(--font-switzer), ui-sans-serif, system-ui, sans-serif;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -79,11 +80,11 @@
     @apply border-border outline-ring/50;
   }
   html {
-    font-family: var(--font-helvetica);
+    font-family: var(--font-primary);
   }
   body {
     background: var(--bg);
     color: var(--fg);
-    font-family: var(--font-helvetica);
+    font-family: var(--font-primary);
   }
 }
