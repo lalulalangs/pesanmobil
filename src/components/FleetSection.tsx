@@ -36,7 +36,7 @@ interface FleetItem {
   priceIdr: string;
 }
 
-const FLEET_ITEMS: FleetItem[] = [
+export const FLEET_ITEMS: FleetItem[] = [
   // Lepas Kunci - Mobil
   {
     id: "toyota-yaris",

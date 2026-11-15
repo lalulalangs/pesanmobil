@@ -3,7 +3,6 @@
 import { memo, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   ArrowRight,
-  Bike,
   Calendar,
   CalendarCheck,
   Car,
@@ -13,6 +12,7 @@ import {
   MapPin,
   UserCheck,
 } from "lucide-react";
+import { FLEET_ITEMS } from "@/components/FleetSection";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -25,10 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type ServiceMode = "lepas-kunci" | "private" | "paket-wisata";
-type VehicleType = "mobil" | "motor";
+type ServiceMode = "without-driver" | "with-driver" | "tour-package";
 
 interface BookingCopy {
   sectionLabel: string;
@@ -38,21 +36,22 @@ interface BookingCopy {
   pickupTimeAria: string;
   returnDateLabel: string;
   returnTimeAria: string;
-  serviceTabsAria: string;
-  lepasKunciLabel: string;
-  privateLabel: string;
-  paketWisataLabel: string;
-  vehicleOptionLabel: string;
-  carLabel: string;
-  motorLabel: string;
-  privateCarOnlyNote: string;
-  tourPackageNote: string;
+  optionLabel: string;
+  withoutDriverLabel: string;
+  withDriverLabel: string;
+  tourPackageLabel: string;
+  unitLabel: string;
+  unitPlaceholderByMode: Record<ServiceMode, string>;
+  motorbikeTag: string;
+  perDay: string;
+  perPackage: string;
   submitLabel: string;
   minDaysTitle: string;
   minDaysDescription: string;
   invalidRangeTitle: string;
   invalidRangeDescription: string;
   missingLocationFallback: string;
+  missingUnitFallback: string;
 }
 
 const COPY: Record<Locale, BookingCopy> = {
@@ -64,23 +63,28 @@ const COPY: Record<Locale, BookingCopy> = {
     pickupTimeAria: "Jam ambil kendaraan",
     returnDateLabel: "Tanggal & Jam Kembali",
     returnTimeAria: "Jam kembali kendaraan",
-    serviceTabsAria: "Jenis layanan sewa",
-    lepasKunciLabel: "Lepas Kunci",
-    privateLabel: "Private (Dengan Supir)",
-    paketWisataLabel: "Paket Wisata",
-    vehicleOptionLabel: "Pilih unit:",
-    carLabel: "Mobil",
-    motorLabel: "Motor",
-    privateCarOnlyNote: "Layanan Private khusus unit Mobil dengan pengemudi.",
-    tourPackageNote: "Paket wisata sudah termasuk unit dan pengemudi.",
+    optionLabel: "Opsi:",
+    withoutDriverLabel: "Lepas Kunci",
+    withDriverLabel: "Dengan Pengemudi",
+    tourPackageLabel: "Paket Wisata",
+    unitLabel: "Pilih Unit / Paket",
+    unitPlaceholderByMode: {
+      "without-driver": "Pilih mobil atau motor",
+      "with-driver": "Pilih mobil dengan supir",
+      "tour-package": "Pilih paket wisata",
+    },
+    motorbikeTag: "Motor",
+    perDay: "/hari",
+    perPackage: "/paket",
     submitLabel: "Booking",
     minDaysTitle: "Sewa lepas kunci minimal 2 hari, ya!",
     minDaysDescription:
-      "Biar tetap nyaman, pemesanan lepas kunci minimal berdurasi 2 hari (48 jam). Yuk tambah tanggal pengembalianmu atau pilih tab Private (Dengan Supir)!",
+      "Biar tetap nyaman, pemesanan lepas kunci minimal berdurasi 2 hari (48 jam). Yuk tambah tanggal pengembalianmu atau pilih opsi Dengan Pengemudi!",
     invalidRangeTitle: "Cek lagi tanggal kembalimu, yuk!",
     invalidRangeDescription:
       "Tanggal & jam kembali harus setelah waktu ambil kendaraan biar jadwalmu bisa kami proses.",
     missingLocationFallback: "Belum ditentukan",
+    missingUnitFallback: "Belum ditentukan",
   },
   en: {
     sectionLabel: "Vehicle booking form",
@@ -90,23 +94,28 @@ const COPY: Record<Locale, BookingCopy> = {
     pickupTimeAria: "Pick up time",
     returnDateLabel: "Return Date & Time",
     returnTimeAria: "Return time",
-    serviceTabsAria: "Rental service type",
-    lepasKunciLabel: "Self-Drive",
-    privateLabel: "Private (With Driver)",
-    paketWisataLabel: "Tour Package",
-    vehicleOptionLabel: "Vehicle:",
-    carLabel: "Car",
-    motorLabel: "Motorbike",
-    privateCarOnlyNote: "Private service is available for Car with driver only.",
-    tourPackageNote: "Tour package includes vehicle and driver.",
+    optionLabel: "Option:",
+    withoutDriverLabel: "Without Driver",
+    withDriverLabel: "With Driver",
+    tourPackageLabel: "Tour Package",
+    unitLabel: "Select Unit / Package",
+    unitPlaceholderByMode: {
+      "without-driver": "Choose car or motorbike",
+      "with-driver": "Choose car with driver",
+      "tour-package": "Choose tour package",
+    },
+    motorbikeTag: "Motorbike",
+    perDay: "/day",
+    perPackage: "/package",
     submitLabel: "Booking",
     minDaysTitle: "Self-drive rentals start at 2 days!",
     minDaysDescription:
-      "To keep things smooth, self-drive bookings require at least 2 days (48 hours). Please extend your return date or switch to Private (With Driver)!",
+      "To keep things smooth, self-drive bookings require at least 2 days (48 hours). Please extend your return date or switch to With Driver!",
     invalidRangeTitle: "Please check your return date!",
     invalidRangeDescription:
       "Your return date and time must be later than the pick up time so we can arrange your schedule.",
     missingLocationFallback: "Not specified yet",
+    missingUnitFallback: "Not specified yet",
   },
 };
 
@@ -154,8 +163,23 @@ export function BookingSection() {
   const [returnDate, setReturnDate] = useState("");
   const [returnTime, setReturnTime] = useState("10:00");
   const [serviceMode, setServiceMode] =
-    useState<ServiceMode>("lepas-kunci");
-  const [vehicleType, setVehicleType] = useState<VehicleType>("mobil");
+    useState<ServiceMode>("without-driver");
+  const [selectedUnitId, setSelectedUnitId] = useState("");
+
+  const availableUnits = useMemo(() => {
+    const targetService =
+      serviceMode === "without-driver"
+        ? "lepas-kunci"
+        : serviceMode === "with-driver"
+          ? "private"
+          : "paket-wisata";
+    return FLEET_ITEMS.filter((item) => item.service === targetService);
+  }, [serviceMode]);
+
+  const handleServiceModeChange = (nextMode: ServiceMode) => {
+    setServiceMode(nextMode);
+    setSelectedUnitId("");
+  };
 
   useEffect(() => {
     const frameId = requestAnimationFrame(() => {
@@ -178,7 +202,7 @@ export function BookingSection() {
 
   const isInvalidRange = durationHours !== null && durationHours <= 0;
   const isBelowSelfDriveMin =
-    serviceMode === "lepas-kunci" &&
+    serviceMode === "without-driver" &&
     durationHours !== null &&
     durationHours > 0 &&
     durationHours < MIN_SELF_DRIVE_HOURS;
@@ -196,37 +220,39 @@ export function BookingSection() {
     const locationText =
       pickupLocation.trim() || copy.missingLocationFallback;
     const modeText =
-      serviceMode === "lepas-kunci"
-        ? copy.lepasKunciLabel
-        : serviceMode === "private"
-          ? copy.privateLabel
-          : copy.paketWisataLabel;
-    const unitText =
-      serviceMode === "lepas-kunci"
-        ? vehicleType === "motor"
-          ? copy.motorLabel
-          : copy.carLabel
-        : serviceMode === "private"
-          ? copy.carLabel
-          : null;
+      serviceMode === "without-driver"
+        ? copy.withoutDriverLabel
+        : serviceMode === "with-driver"
+          ? copy.withDriverLabel
+          : copy.tourPackageLabel;
+    const selectedUnit = availableUnits.find(
+      (item) => item.id === selectedUnitId
+    );
+    const unitText = selectedUnit
+      ? `${selectedUnit.name} (${selectedUnit.priceIdr}${
+          selectedUnit.service === "paket-wisata"
+            ? copy.perPackage
+            : copy.perDay
+        })`
+      : copy.missingUnitFallback;
 
     const message =
       locale === "id"
         ? [
-            "Halo pesanmobil.com, saya mau booking dengan detail berikut:",
-            `- Layanan: ${modeText}`,
-            ...(unitText ? [`- Unit: ${unitText}`] : []),
+            "Halo pesanmobil.com, saya mau booking unit dengan detail berikut:",
             `- Lokasi Penjemputan: ${locationText}`,
             `- Ambil: ${pickupDate} pukul ${pickupTime}`,
             `- Kembali: ${returnDate} pukul ${returnTime}`,
+            `- Opsi: ${modeText}`,
+            `- Unit / Paket: ${unitText}`,
           ].join("\n")
         : [
-            "Hello pesanmobil.com, I would like to book with these details:",
-            `- Service: ${modeText}`,
-            ...(unitText ? [`- Vehicle: ${unitText}`] : []),
+            "Hello pesanmobil.com, I would like to book a vehicle with these details:",
             `- Pick Up Location: ${locationText}`,
             `- Pick Up: ${pickupDate} at ${pickupTime}`,
             `- Return: ${returnDate} at ${returnTime}`,
+            `- Option: ${modeText}`,
+            `- Unit / Package: ${unitText}`,
           ].join("\n");
 
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -246,42 +272,6 @@ export function BookingSection() {
           onSubmit={handleSubmit}
           className="rounded-2xl bg-[var(--bg)] border border-[var(--border)]/80 shadow-[0_4px_24px_rgba(29,29,31,0.06)] p-5 sm:p-7"
         >
-          {/* Service Tabs: Lepas Kunci, Private (Dengan Supir), Paket Wisata */}
-          <Tabs
-            value={serviceMode}
-            onValueChange={(value) => {
-              if (value) setServiceMode(value as ServiceMode);
-            }}
-            className="mb-5"
-          >
-            <TabsList
-              aria-label={copy.serviceTabsAria}
-              className="h-auto w-full sm:w-fit flex-wrap justify-start gap-1.5 rounded-2xl sm:rounded-full bg-[#f4f4f5] p-1.5"
-            >
-              <TabsTrigger
-                value="lepas-kunci"
-                className="h-9 flex-none rounded-full px-4 text-[13px] font-medium text-[var(--fg-2)] ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-active:bg-gradient-to-b data-active:from-[#38bdf8] data-active:to-[#009cde] data-active:text-white data-active:border-[#009cde] data-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-              >
-                <KeyRound className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>{copy.lepasKunciLabel}</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="private"
-                className="h-9 flex-none rounded-full px-4 text-[13px] font-medium text-[var(--fg-2)] ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-active:bg-gradient-to-b data-active:from-[#38bdf8] data-active:to-[#009cde] data-active:text-white data-active:border-[#009cde] data-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-              >
-                <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>{copy.privateLabel}</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="paket-wisata"
-                className="h-9 flex-none rounded-full px-4 text-[13px] font-medium text-[var(--fg-2)] ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-active:bg-gradient-to-b data-active:from-[#38bdf8] data-active:to-[#009cde] data-active:text-white data-active:border-[#009cde] data-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-              >
-                <Compass className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>{copy.paketWisataLabel}</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
           {/* Top Row: Location, Pick Up Date & Time, Return Date & Time */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Pick Up Location */}
@@ -421,77 +411,131 @@ export function BookingSection() {
             </div>
           </div>
 
-          {/* Bottom Row: Vehicle Option (Lepas Kunci: Mobil/Motor, Private: Mobil only) + Booking CTA */}
-          <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-2.5">
-              {serviceMode === "lepas-kunci" ? (
-                <>
-                  <span className="text-[14px] font-medium text-[var(--muted-text)] mr-1">
-                    {copy.vehicleOptionLabel}
-                  </span>
-                  <div
-                    role="radiogroup"
-                    aria-label={copy.vehicleOptionLabel}
-                    className="inline-flex flex-wrap items-center gap-2"
+          {/* Bottom Row: Service Option + Unit/Package Select + Booking CTA */}
+          <div className="mt-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[14px] font-medium text-[var(--muted-text)] mr-1">
+                  {copy.optionLabel}
+                </span>
+                <div
+                  role="radiogroup"
+                  aria-label={copy.optionLabel}
+                  className="inline-flex flex-wrap items-center gap-2"
+                >
+                  <Button
+                    type="button"
+                    role="radio"
+                    aria-checked={serviceMode === "without-driver"}
+                    variant={
+                      serviceMode === "without-driver" ? "default" : "outline"
+                    }
+                    onClick={() => handleServiceModeChange("without-driver")}
+                    className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
+                      serviceMode === "without-driver"
+                        ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
+                        : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
+                    }`}
                   >
-                    <Button
-                      type="button"
-                      role="radio"
-                      aria-checked={vehicleType === "mobil"}
-                      variant={vehicleType === "mobil" ? "default" : "outline"}
-                      onClick={() => setVehicleType("mobil")}
-                      className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                        vehicleType === "mobil"
-                          ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-                          : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
-                      }`}
-                    >
-                      <Car className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>{copy.carLabel}</span>
-                    </Button>
+                    <KeyRound className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>{copy.withoutDriverLabel}</span>
+                  </Button>
 
-                    <Button
-                      type="button"
-                      role="radio"
-                      aria-checked={vehicleType === "motor"}
-                      variant={vehicleType === "motor" ? "default" : "outline"}
-                      onClick={() => setVehicleType("motor")}
-                      className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                        vehicleType === "motor"
-                          ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-                          : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
-                      }`}
-                    >
-                      <Bike className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>{copy.motorLabel}</span>
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <p className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--muted-text)]">
-                  {serviceMode === "private" ? (
-                    <>
-                      <Car className="w-4 h-4 text-[#0077ae]" aria-hidden="true" />
-                      <span>{copy.privateCarOnlyNote}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Compass
-                        className="w-4 h-4 text-[#0077ae]"
-                        aria-hidden="true"
-                      />
-                      <span>{copy.tourPackageNote}</span>
-                    </>
-                  )}
-                </p>
-              )}
+                  <Button
+                    type="button"
+                    role="radio"
+                    aria-checked={serviceMode === "with-driver"}
+                    variant={
+                      serviceMode === "with-driver" ? "default" : "outline"
+                    }
+                    onClick={() => handleServiceModeChange("with-driver")}
+                    className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
+                      serviceMode === "with-driver"
+                        ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
+                        : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
+                    }`}
+                  >
+                    <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>{copy.withDriverLabel}</span>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    role="radio"
+                    aria-checked={serviceMode === "tour-package"}
+                    variant={
+                      serviceMode === "tour-package" ? "default" : "outline"
+                    }
+                    onClick={() => handleServiceModeChange("tour-package")}
+                    className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
+                      serviceMode === "tour-package"
+                        ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
+                        : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
+                    }`}
+                  >
+                    <Compass className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>{copy.tourPackageLabel}</span>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="h-10 rounded-xl bg-[#f4f4f5] px-3 flex items-center gap-2 border border-transparent focus-within:border-[var(--brand)] focus-within:bg-white transition-colors w-full sm:w-[270px]">
+                <Car
+                  className="w-4 h-4 shrink-0 text-[var(--muted-text)]"
+                  aria-hidden="true"
+                />
+                <Select
+                  value={selectedUnitId}
+                  onValueChange={(value) => setSelectedUnitId(value ?? "")}
+                >
+                  <SelectTrigger
+                    id="booking-unit"
+                    aria-label={copy.unitLabel}
+                    className="border-0 bg-transparent px-0 h-auto data-[size=default]:h-auto shadow-none focus-visible:ring-0 focus-visible:border-transparent text-[13px] text-[var(--fg)] w-full justify-between"
+                  >
+                    <SelectValue
+                      placeholder={copy.unitPlaceholderByMode[serviceMode]}
+                    />
+                  </SelectTrigger>
+                  <SelectContent
+                    alignItemWithTrigger={false}
+                    side="bottom"
+                    align="start"
+                    sideOffset={8}
+                    data-lenis-prevent
+                    className="max-h-64 min-w-[260px] rounded-xl border border-[var(--border)] bg-white p-1 shadow-[0_8px_24px_rgba(29,29,31,0.1)] ring-0"
+                  >
+                    {availableUnits.map((unit) => {
+                      const tag =
+                        unit.vehicleType === "motor"
+                          ? ` (${copy.motorbikeTag})`
+                          : "";
+                      const unitRate =
+                        unit.service === "paket-wisata"
+                          ? copy.perPackage
+                          : copy.perDay;
+                      return (
+                        <SelectItem
+                          key={unit.id}
+                          value={unit.id}
+                          className={TIME_ITEM_CLASS}
+                        >
+                          {unit.name}
+                          {tag} — {unit.priceIdr}
+                          {unitRate}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <Button
               type="submit"
               variant="cta"
               disabled={isSubmitDisabled}
-              className="h-11 w-full sm:w-auto gap-2 px-7 text-[15px] disabled:opacity-50"
+              className="h-11 w-full lg:w-auto gap-2 px-7 text-[15px] disabled:opacity-50"
             >
               <span>{copy.submitLabel}</span>
               <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
