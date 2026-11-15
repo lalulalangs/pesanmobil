@@ -127,7 +127,7 @@ export function FaqSection() {
         fill
         aria-hidden="true"
         sizes="100vw"
-        className="pointer-events-none -z-20 object-cover object-center"
+        className="pointer-events-none -z-20 object-cover object-center opacity-50"
       />
       {/* Soft white overlay and seamless vertical edge fade */}
       <div
