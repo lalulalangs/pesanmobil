@@ -93,10 +93,10 @@ export function HeroSection({
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
       />
 
-      {/* Seamless bottom fade into the next section surface */}
+      {/* Seamless bottom fade into the next section background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28 sm:h-40 bg-gradient-to-b from-transparent to-[var(--surface)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28 sm:h-40 bg-gradient-to-b from-transparent to-[var(--bg)]"
       />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8">

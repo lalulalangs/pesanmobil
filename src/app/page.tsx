@@ -45,8 +45,8 @@ export default function Home() {
         ctaHref={HERO_CONTENT.ctaHref}
         localizedCopy={HERO_CONTENT.localizedCopy}
       />
-      <BookingSection />
       <FleetSection />
+      <BookingSection />
     </main>
   );
 }
