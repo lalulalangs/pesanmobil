@@ -6,7 +6,6 @@ import {
   Calendar,
   CalendarCheck,
   Car,
-  Compass,
   Info,
   KeyRound,
   MapPin,
@@ -26,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type ServiceMode = "without-driver" | "with-driver" | "tour-package";
+type ServiceMode = "without-driver" | "with-driver";
 
 interface BookingCopy {
   sectionLabel: string;
@@ -39,12 +38,10 @@ interface BookingCopy {
   optionLabel: string;
   withoutDriverLabel: string;
   withDriverLabel: string;
-  tourPackageLabel: string;
   unitLabel: string;
   unitPlaceholderByMode: Record<ServiceMode, string>;
   motorbikeTag: string;
   perDay: string;
-  perPackage: string;
   submitLabel: string;
   minDaysTitle: string;
   minDaysDescription: string;
@@ -66,16 +63,13 @@ const COPY: Record<Locale, BookingCopy> = {
     optionLabel: "Opsi:",
     withoutDriverLabel: "Lepas Kunci",
     withDriverLabel: "Dengan Pengemudi",
-    tourPackageLabel: "Paket Wisata",
-    unitLabel: "Pilih Unit / Paket",
+    unitLabel: "Pilih Unit",
     unitPlaceholderByMode: {
       "without-driver": "Pilih mobil atau motor",
       "with-driver": "Pilih mobil dengan supir",
-      "tour-package": "Pilih paket wisata",
     },
     motorbikeTag: "Motor",
     perDay: "/hari",
-    perPackage: "/paket",
     submitLabel: "Booking",
     minDaysTitle: "Sewa lepas kunci minimal 2 hari, ya!",
     minDaysDescription:
@@ -97,16 +91,13 @@ const COPY: Record<Locale, BookingCopy> = {
     optionLabel: "Option:",
     withoutDriverLabel: "Without Driver",
     withDriverLabel: "With Driver",
-    tourPackageLabel: "Tour Package",
-    unitLabel: "Select Unit / Package",
+    unitLabel: "Select Unit",
     unitPlaceholderByMode: {
       "without-driver": "Choose car or motorbike",
       "with-driver": "Choose car with driver",
-      "tour-package": "Choose tour package",
     },
     motorbikeTag: "Motorbike",
     perDay: "/day",
-    perPackage: "/package",
     submitLabel: "Booking",
     minDaysTitle: "Self-drive rentals start at 2 days!",
     minDaysDescription:
@@ -168,11 +159,7 @@ export function BookingSection() {
 
   const availableUnits = useMemo(() => {
     const targetService =
-      serviceMode === "without-driver"
-        ? "lepas-kunci"
-        : serviceMode === "with-driver"
-          ? "private"
-          : "paket-wisata";
+      serviceMode === "without-driver" ? "lepas-kunci" : "private";
     return FLEET_ITEMS.filter((item) => item.service === targetService);
   }, [serviceMode]);
 
@@ -222,18 +209,12 @@ export function BookingSection() {
     const modeText =
       serviceMode === "without-driver"
         ? copy.withoutDriverLabel
-        : serviceMode === "with-driver"
-          ? copy.withDriverLabel
-          : copy.tourPackageLabel;
+        : copy.withDriverLabel;
     const selectedUnit = availableUnits.find(
       (item) => item.id === selectedUnitId
     );
     const unitText = selectedUnit
-      ? `${selectedUnit.name} (${selectedUnit.priceIdr}${
-          selectedUnit.service === "paket-wisata"
-            ? copy.perPackage
-            : copy.perDay
-        })`
+      ? `${selectedUnit.name} (${selectedUnit.priceIdr}${copy.perDay})`
       : copy.missingUnitFallback;
 
     const message =
@@ -244,7 +225,7 @@ export function BookingSection() {
             `- Ambil: ${pickupDate} pukul ${pickupTime}`,
             `- Kembali: ${returnDate} pukul ${returnTime}`,
             `- Opsi: ${modeText}`,
-            `- Unit / Paket: ${unitText}`,
+            `- Unit: ${unitText}`,
           ].join("\n")
         : [
             "Hello pesanmobil.com, I would like to book a vehicle with these details:",
@@ -252,7 +233,7 @@ export function BookingSection() {
             `- Pick Up: ${pickupDate} at ${pickupTime}`,
             `- Return: ${returnDate} at ${returnTime}`,
             `- Option: ${modeText}`,
-            `- Unit / Package: ${unitText}`,
+            `- Unit: ${unitText}`,
           ].join("\n");
 
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -458,24 +439,6 @@ export function BookingSection() {
                     <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
                     <span>{copy.withDriverLabel}</span>
                   </Button>
-
-                  <Button
-                    type="button"
-                    role="radio"
-                    aria-checked={serviceMode === "tour-package"}
-                    variant={
-                      serviceMode === "tour-package" ? "default" : "outline"
-                    }
-                    onClick={() => handleServiceModeChange("tour-package")}
-                    className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                      serviceMode === "tour-package"
-                        ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-                        : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
-                    }`}
-                  >
-                    <Compass className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>{copy.tourPackageLabel}</span>
-                  </Button>
                 </div>
               </div>
 
@@ -510,10 +473,6 @@ export function BookingSection() {
                         unit.vehicleType === "motor"
                           ? ` (${copy.motorbikeTag})`
                           : "";
-                      const unitRate =
-                        unit.service === "paket-wisata"
-                          ? copy.perPackage
-                          : copy.perDay;
                       return (
                         <SelectItem
                           key={unit.id}
@@ -522,7 +481,7 @@ export function BookingSection() {
                         >
                           {unit.name}
                           {tag} — {unit.priceIdr}
-                          {unitRate}
+                          {copy.perDay}
                         </SelectItem>
                       );
                     })}
