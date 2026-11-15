@@ -29,6 +29,8 @@ type ServiceMode = "without-driver" | "with-driver";
 
 interface BookingCopy {
   sectionLabel: string;
+  headline: string;
+  subheadline: string;
   pickupLocationLabel: string;
   pickupLocationPlaceholder: string;
   pickupDateLabel: string;
@@ -54,6 +56,9 @@ interface BookingCopy {
 const COPY: Record<Locale, BookingCopy> = {
   id: {
     sectionLabel: "Formulir pemesanan kendaraan",
+    headline: "Siap jalan? Atur detail perjalananmu dulu, ya",
+    subheadline:
+      "Tentukan lokasi jemput dan durasi sewa. Setelah klik booking, tim kami langsung bantu cek jadwal unitnya via WhatsApp.",
     pickupLocationLabel: "Lokasi Penjemputan",
     pickupLocationPlaceholder: "Kota, bandara, hotel, atau alamat",
     pickupDateLabel: "Tanggal & Jam Ambil",
@@ -82,6 +87,9 @@ const COPY: Record<Locale, BookingCopy> = {
   },
   en: {
     sectionLabel: "Vehicle booking form",
+    headline: "Ready to roll? Set your trip details first",
+    subheadline:
+      "Choose your pick-up location and rental duration. Once you click booking, our team will check unit availability right away on WhatsApp.",
     pickupLocationLabel: "Pick Up Location",
     pickupLocationPlaceholder: "City, airport, hotel, or address",
     pickupDateLabel: "Pick Up Date & Time",
@@ -249,6 +257,15 @@ export function BookingSection() {
       className="w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
     >
       <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
+        <div className="mb-6 sm:mb-8 flex flex-col items-end text-right">
+          <h2 className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
+            {copy.headline}
+          </h2>
+          <p className="mt-2 text-[15px] sm:text-[16px] text-[var(--muted-text)] max-w-[60ch]">
+            {copy.subheadline}
+          </p>
+        </div>
+
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl bg-[var(--bg)] border border-[var(--border)]/80 shadow-[0_4px_24px_rgba(29,29,31,0.06)] p-5 sm:p-7"
