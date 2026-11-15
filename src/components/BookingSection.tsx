@@ -257,7 +257,7 @@ export function BookingSection() {
       className="w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
     >
       <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
-        <div className="mb-6 sm:mb-8 flex flex-col items-end text-right">
+        <div className="mb-6 sm:mb-8">
           <h2 className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
             {copy.headline}
           </h2>
