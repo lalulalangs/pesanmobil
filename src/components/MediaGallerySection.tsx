@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,22 +14,20 @@ interface MediaItem {
   kind: "video" | "image";
   title: Record<Locale, string>;
   ratioLabel: string;
-  colClass: string;
   src?: string;
 }
 
-const MEDIA_ITEMS: MediaItem[] = [
-  {
-    id: "video-handover",
-    kind: "video",
-    title: {
-      id: "Serah Terima Unit",
-      en: "Vehicle Handover",
-    },
-    ratioLabel: "Video 4:5",
-    colClass:
-      "col-span-2 lg:col-span-5 aspect-[4/5] max-h-[420px] lg:max-h-none lg:h-full",
+const PRIMARY_MEDIA: MediaItem = {
+  id: "video-handover",
+  kind: "video",
+  title: {
+    id: "Serah Terima Unit",
+    en: "Vehicle Handover",
   },
+  ratioLabel: "Video 4:5",
+};
+
+const SECONDARY_MEDIA: MediaItem[] = [
   {
     id: "video-walkthrough",
     kind: "video",
@@ -38,7 +36,6 @@ const MEDIA_ITEMS: MediaItem[] = [
       en: "Fleet Inspection",
     },
     ratioLabel: "Video 16:9",
-    colClass: "col-span-2 aspect-video",
   },
   {
     id: "photo-interior",
@@ -48,7 +45,6 @@ const MEDIA_ITEMS: MediaItem[] = [
       en: "Clean Cabin Interior",
     },
     ratioLabel: "Foto 1:1",
-    colClass: "col-span-1 aspect-square",
   },
   {
     id: "photo-exterior",
@@ -58,7 +54,6 @@ const MEDIA_ITEMS: MediaItem[] = [
       en: "Road-Ready Exterior",
     },
     ratioLabel: "Foto 1:1",
-    colClass: "col-span-1 aspect-square",
   },
 ];
 
@@ -87,13 +82,20 @@ const COPY: Record<Locale, MediaCopy> = {
 export function MediaGallerySection() {
   const { locale } = useLanguage();
   const copy = COPY[locale];
+  const rawId = useId().replace(/:/g, "");
+  const filterId = `blackhole-warp-${rawId}`;
+
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const turbulenceRef = useRef<SVGFETurbulenceElement>(null);
+  const displacementRef = useRef<SVGFEDisplacementMapElement>(null);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
 
   useGSAP(
     () => {
       const grid = gridRef.current;
+      const turbulence = turbulenceRef.current;
+      const displacement = displacementRef.current;
       if (!grid) return;
 
       const cards = gsap.utils.toArray<HTMLElement>(
@@ -109,53 +111,113 @@ export function MediaGallerySection() {
         const centerX = gridRect.left + gridRect.width / 2;
         const centerY = gridRect.top + gridRect.height / 2;
 
-        gsap.fromTo(
+        // Compute radial pull vectors toward the center singularity per card
+        const vectors = cards.map((card) => {
+          const rect = card.getBoundingClientRect();
+          const dx = centerX - (rect.left + rect.width / 2);
+          const dy = centerY - (rect.top + rect.height / 2);
+          const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+          return {
+            x: dx * 0.72,
+            y: dy * 0.72,
+            rotation: Math.max(-18, Math.min(18, angleDeg * 0.12)),
+          };
+        });
+
+        gsap.set(cards, {
+          opacity: 0,
+          x: (index) => vectors[index].x,
+          y: (index) => vectors[index].y,
+          scaleX: 0.18,
+          scaleY: 1.75,
+          skewX: (index) => (index % 2 === 0 ? -16 : 16),
+          rotation: (index) => vectors[index].rotation,
+          clipPath: "inset(10% 24% 10% 24% round 999px)",
+          filter: `url(#${filterId})`,
+          transformPerspective: 1000,
+          rotationX: 22,
+        });
+
+        if (displacement) {
+          gsap.set(displacement, { attr: { scale: 72 } });
+        }
+        if (turbulence) {
+          gsap.set(turbulence, { attr: { baseFrequency: "0.032 0.012" } });
+        }
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: grid,
+            start: "top 86%",
+            once: true,
+          },
+          onComplete: () => {
+            gsap.set(cards, {
+              clearProps: "transform,filter,clipPath,opacity",
+            });
+          },
+        });
+
+        // Phase 1: Spaghettification snap out of the singularity
+        tl.to(cards, {
+          opacity: 1,
+          x: 0,
+          y: 0,
+          scaleX: 1.04,
+          scaleY: 0.96,
+          skewX: 0,
+          rotation: 0,
+          rotationX: 0,
+          clipPath: "inset(0% 0% 0% 0% round 16px)",
+          duration: 0.72,
+          stagger: { amount: 0.18, from: "center" },
+          ease: "power4.out",
+        });
+
+        // Unwind SVG gravitational distortion in parallel
+        if (displacement) {
+          tl.to(
+            displacement,
+            {
+              attr: { scale: 0 },
+              duration: 0.85,
+              ease: "power3.out",
+            },
+            0
+          );
+        }
+        if (turbulence) {
+          tl.to(
+            turbulence,
+            {
+              attr: { baseFrequency: "0.002 0.002" },
+              duration: 0.85,
+              ease: "power2.out",
+            },
+            0
+          );
+        }
+
+        // Phase 2: Elastic rebound to crisp normal layout
+        tl.to(
           cards,
           {
-            opacity: 0,
-            x: (_index, el: HTMLElement) => {
-              const rect = el.getBoundingClientRect();
-              return (centerX - (rect.left + rect.width / 2)) * 0.55;
-            },
-            y: (_index, el: HTMLElement) => {
-              const rect = el.getBoundingClientRect();
-              return (centerY - (rect.top + rect.height / 2)) * 0.55;
-            },
-            scaleX: 0.28,
-            scaleY: 1.35,
-            skewX: (index) => (index % 2 === 0 ? -12 : 12),
-            rotation: (index) => (index % 2 === 0 ? -6 : 6),
-          },
-          {
-            opacity: 1,
-            x: 0,
-            y: 0,
             scaleX: 1,
             scaleY: 1,
-            skewX: 0,
-            rotation: 0,
-            duration: 0.95,
-            stagger: { amount: 0.22, from: "center" },
-            ease: "elastic.out(1, 0.72)",
-            clearProps: "transform,opacity",
-            scrollTrigger: {
-              trigger: grid,
-              start: "top 82%",
-              once: true,
-            },
-          }
+            duration: 0.48,
+            stagger: { amount: 0.1, from: "center" },
+            ease: "elastic.out(1, 0.65)",
+          },
+          "-=0.22"
         );
       });
 
       return () => mm.revert();
     },
-    { scope: sectionRef }
+    { scope: sectionRef, dependencies: [filterId] }
   );
 
-  const primaryCard = MEDIA_ITEMS[0];
-  const secondaryCards = MEDIA_ITEMS.slice(1);
-
-  const renderCard = (item: MediaItem) => {
+  const renderCard = (item: MediaItem, sizeClass: string) => {
     const title = item.title[locale];
     const isVideo = item.kind === "video";
     const isPreviewing = activeVideoId === item.id;
@@ -164,7 +226,7 @@ export function MediaGallerySection() {
       <article
         key={item.id}
         data-gallery-card
-        className={`group relative rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)] focus-within:ring-2 focus-within:ring-[var(--brand)] focus-within:ring-offset-2 ${item.colClass}`}
+        className={`group relative w-full rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)] focus-within:ring-2 focus-within:ring-[var(--brand)] focus-within:ring-offset-2 ${sizeClass}`}
       >
         {isVideo && item.src && isPreviewing ? (
           <video
@@ -188,7 +250,10 @@ export function MediaGallerySection() {
                 aria-label={copy.playVideoLabel(title)}
                 className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--cta)] text-[var(--cta-on)] shadow-[0_2px_8px_rgba(234,88,12,0.28)] transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
               >
-                <Play className="w-5 h-5 fill-current ml-0.5" aria-hidden="true" />
+                <Play
+                  className="w-5 h-5 fill-current ml-0.5"
+                  aria-hidden="true"
+                />
               </button>
             ) : (
               <ImageIcon
@@ -223,6 +288,40 @@ export function MediaGallerySection() {
       aria-label={copy.sectionLabel}
       className="w-full bg-[var(--surface)] py-12 sm:py-20 font-sans overflow-hidden"
     >
+      {/* Hidden SVG filter for gravitational spaghettification warp */}
+      <svg
+        aria-hidden="true"
+        className="pointer-events-none absolute h-0 w-0 overflow-hidden"
+      >
+        <defs>
+          <filter
+            id={filterId}
+            x="-20%"
+            y="-20%"
+            width="140%"
+            height="140%"
+            colorInterpolationFilters="sRGB"
+          >
+            <feTurbulence
+              ref={turbulenceRef}
+              type="fractalNoise"
+              baseFrequency="0.002 0.002"
+              numOctaves="2"
+              seed="8"
+              result="warpNoise"
+            />
+            <feDisplacementMap
+              ref={displacementRef}
+              in="SourceGraphic"
+              in2="warpNoise"
+              scale="0"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </defs>
+      </svg>
+
       <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
         <h2 className="mb-6 sm:mb-8 text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
           {copy.headline}
@@ -230,13 +329,28 @@ export function MediaGallerySection() {
 
         <div
           ref={gridRef}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4"
+          className="grid grid-cols-1 lg:grid-cols-12 lg:items-stretch gap-3 sm:gap-4"
         >
-          <div className="lg:col-span-5 grid grid-cols-2 lg:block gap-3 sm:gap-4">
-            {renderCard(primaryCard)}
+          <div className="lg:col-span-5 flex">
+            {renderCard(
+              PRIMARY_MEDIA,
+              "aspect-[4/5] max-h-[440px] lg:max-h-none lg:aspect-auto lg:min-h-[500px] lg:h-full"
+            )}
           </div>
+
           <div className="lg:col-span-7 grid grid-cols-2 gap-3 sm:gap-4">
-            {secondaryCards.map(renderCard)}
+            {renderCard(
+              SECONDARY_MEDIA[0],
+              "col-span-2 aspect-video lg:aspect-auto lg:min-h-[260px]"
+            )}
+            {renderCard(
+              SECONDARY_MEDIA[1],
+              "col-span-1 aspect-square lg:aspect-auto lg:min-h-[224px]"
+            )}
+            {renderCard(
+              SECONDARY_MEDIA[2],
+              "col-span-1 aspect-square lg:aspect-auto lg:min-h-[224px]"
+            )}
           </div>
         </div>
       </div>
