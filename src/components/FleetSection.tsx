@@ -162,9 +162,12 @@ export function FleetSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-pl-5 -mx-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-8 sm:overflow-visible">
           {FLEET_ITEMS.map((vehicle) => (
-            <article key={vehicle.id} className="flex flex-col">
+            <article
+              key={vehicle.id}
+              className="flex flex-col w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+            >
               {/* Image placeholder box */}
               <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] p-4 flex items-center justify-center overflow-hidden">
                 <span className="absolute top-3.5 left-3.5 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
@@ -232,7 +235,7 @@ export function FleetSection() {
             variant="outline"
             nativeButton={false}
             render={<Link href="/mobil" />}
-            className="h-10 rounded-lg border-[var(--border)] bg-white px-5 text-[14px] font-medium text-[var(--fg)] hover:bg-[var(--surface)] shadow-[0_1px_2px_rgba(29,29,31,0.04)]"
+            className="h-10 w-full sm:w-auto rounded-lg border-[var(--border)] bg-white px-5 text-[14px] font-medium text-[var(--fg)] hover:bg-[var(--surface)] shadow-[0_1px_2px_rgba(29,29,31,0.04)]"
           >
             {copy.seeMore}
           </Button>
