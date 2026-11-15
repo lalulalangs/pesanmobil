@@ -602,14 +602,14 @@ export function FleetSection() {
                 {vehicle.service === "paket-wisata" && (
                   <div className="mt-2.5">
                     <Button
-                      variant="cta"
+                      variant="default"
                       nativeButton={false}
                       render={
                         <Link
                           href={`/mobil?layanan=paket-wisata&paket=${vehicle.id}`}
                         />
                       }
-                      className="h-9 w-full gap-1.5 px-4 text-[13px]"
+                      className="h-9 w-full gap-1.5 rounded-full px-4 text-[13px] font-medium ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
                     >
                       <span>{copy.detailLabel}</span>
                       <ArrowRight
