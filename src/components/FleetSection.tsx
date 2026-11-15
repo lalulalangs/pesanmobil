@@ -411,7 +411,7 @@ export function FleetSection() {
                   <TabsTrigger
                     key={tabKey}
                     value={tabKey}
-                    className="rounded-full px-3 sm:px-5 text-[13px] sm:text-[14px] font-medium text-[var(--muted-text)] data-active:bg-white data-active:text-[var(--fg)] data-active:shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                    className="rounded-full px-3 sm:px-5 text-[13px] sm:text-[14px] font-medium text-[var(--muted-text)] data-active:bg-gradient-to-b data-active:from-[#fb923c] data-active:to-[#ea580c] data-active:border-[#ea580c] data-active:text-[#fffbeb] data-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
                   >
                     {copy.tabs[tabKey]}
                   </TabsTrigger>
