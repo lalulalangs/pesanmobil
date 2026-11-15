@@ -1,6 +1,8 @@
 "use client";
 
 import { memo, useEffect, useMemo, useState, type FormEvent } from "react";
+import Image from "next/image";
+import bookingBg from "../../assets/booking-section-background.jpg";
 import {
   ArrowRight,
   Calendar,
@@ -254,9 +256,22 @@ export function BookingSection() {
     <section
       id="booking"
       aria-label={copy.sectionLabel}
-      className="w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
+      className="relative isolate overflow-hidden w-full bg-[var(--bg)] py-12 sm:py-20 font-sans"
     >
-      <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
+      <Image
+        src={bookingBg}
+        alt=""
+        fill
+        aria-hidden="true"
+        sizes="100vw"
+        className="pointer-events-none -z-20 object-cover object-center"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,#ffffff_0%,rgba(255,255,255,0.88)_20%,rgba(255,255,255,0)_50%,rgba(255,255,255,0.88)_80%,#ffffff_100%)]"
+      />
+
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8">
         <div className="mb-6 sm:mb-8">
           <h2 className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
             {copy.headline}
