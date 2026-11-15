@@ -1,6 +1,7 @@
 import { BookingSection } from "@/components/BookingSection";
 import { FleetSection } from "@/components/FleetSection";
 import { HeroSection } from "@/components/HeroSection";
+import { MediaGallerySection } from "@/components/MediaGallerySection";
 
 const whatsappNumber =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
@@ -47,6 +48,7 @@ export default function Home() {
       />
       <FleetSection />
       <BookingSection />
+      <MediaGallerySection />
     </main>
   );
 }
