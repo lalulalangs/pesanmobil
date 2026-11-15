@@ -268,6 +268,7 @@ interface FleetCopy {
   perPackage: string;
   withDriverNote: string;
   seeMore: string;
+  detailLabel: string;
   placeholderLabel: string;
   seatsLabel: (count: number) => string;
   luggageLabel: (count: number) => string;
@@ -298,6 +299,7 @@ const COPY: Record<Locale, FleetCopy> = {
     perPackage: "/ paket",
     withDriverNote: "Termasuk supir",
     seeMore: "Lihat Semua",
+    detailLabel: "Detail",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} kursi`,
     luggageLabel: (count) => `${count} bagasi`,
@@ -330,6 +332,7 @@ const COPY: Record<Locale, FleetCopy> = {
     perPackage: "/ package",
     withDriverNote: "With driver",
     seeMore: "See More",
+    detailLabel: "Details",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} seats`,
     luggageLabel: (count) => `${count} luggage`,
@@ -411,7 +414,7 @@ export function FleetSection() {
                   <TabsTrigger
                     key={tabKey}
                     value={tabKey}
-                    className="rounded-full px-3 sm:px-5 text-[13px] sm:text-[14px] font-medium text-[var(--muted-text)] data-active:bg-gradient-to-b data-active:from-[#fb923c] data-active:to-[#ea580c] data-active:border-[#ea580c] data-active:text-[#fffbeb] data-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                    className="rounded-full px-3 sm:px-5 text-[13px] sm:text-[14px] font-medium text-[var(--muted-text)] data-active:bg-gradient-to-b data-active:from-[#fb923c] data-active:to-[#ea580c] data-active:border-[#ea580c] data-active:text-[var(--fg)] data-active:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
                   >
                     {copy.tabs[tabKey]}
                   </TabsTrigger>
@@ -429,12 +432,12 @@ export function FleetSection() {
                   type="button"
                   role="radio"
                   aria-checked={vehicleType === "mobil"}
-                  variant="outline"
+                  variant={vehicleType === "mobil" ? "default" : "outline"}
                   onClick={() => handleVehicleTypeChange("mobil")}
-                  className={`h-9 rounded-full px-3.5 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
+                  className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
                     vehicleType === "mobil"
-                      ? "bg-[#38bdf8]/15 text-[#0077ae] border-[#0095d9] hover:bg-[#38bdf8]/20 hover:text-[#0077ae]"
-                      : "bg-transparent text-[var(--muted-text)] border-[var(--border)] hover:text-[var(--fg)]"
+                      ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
+                      : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
                   }`}
                 >
                   <Car className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
@@ -444,12 +447,12 @@ export function FleetSection() {
                   type="button"
                   role="radio"
                   aria-checked={vehicleType === "motor"}
-                  variant="outline"
+                  variant={vehicleType === "motor" ? "default" : "outline"}
                   onClick={() => handleVehicleTypeChange("motor")}
-                  className={`h-9 rounded-full px-3.5 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
+                  className={`h-9 rounded-full px-4 text-[13px] font-medium gap-1.5 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 ${
                     vehicleType === "motor"
-                      ? "bg-[#38bdf8]/15 text-[#0077ae] border-[#0095d9] hover:bg-[#38bdf8]/20 hover:text-[#0077ae]"
-                      : "bg-transparent text-[var(--muted-text)] border-[var(--border)] hover:text-[var(--fg)]"
+                      ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
+                      : "bg-white text-[var(--fg-2)] border-[var(--border)] hover:bg-[var(--surface)]"
                   }`}
                 >
                   <Bike className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
@@ -595,6 +598,27 @@ export function FleetSection() {
                     </span>
                   </p>
                 </div>
+
+                {vehicle.service === "paket-wisata" && (
+                  <div className="mt-2.5">
+                    <Button
+                      variant="cta"
+                      nativeButton={false}
+                      render={
+                        <Link
+                          href={`/mobil?layanan=paket-wisata&paket=${vehicle.id}`}
+                        />
+                      }
+                      className="h-9 w-full gap-1.5 px-4 text-[13px]"
+                    >
+                      <span>{copy.detailLabel}</span>
+                      <ArrowRight
+                        className="w-3.5 h-3.5 shrink-0"
+                        aria-hidden="true"
+                      />
+                    </Button>
+                  </div>
+                )}
               </div>
             </article>
           ))}
