@@ -233,7 +233,8 @@ export function AboutSection() {
         dragMinimum: 6,
         onChangeX: (self) => {
           const stepPx = getStepPx();
-          state.offset -= self.deltaX / stepPx;
+          const isWheel = self.event?.type === "wheel";
+          state.offset += isWheel ? self.deltaX / stepPx : -self.deltaX / stepPx;
           render();
         },
         onRelease: () => {
