@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { CheckCircle2, Clock, MapPin, ShieldCheck } from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
+
+const ABOUT_SLIDES = ["slide-1", "slide-2", "slide-3"] as const;
 
 interface HighlightCard {
   id: string;
@@ -129,20 +132,48 @@ const COPY: Record<Locale, AboutCopy> = {
 export function AboutSection() {
   const { locale } = useLanguage();
   const copy = COPY[locale];
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      const container = carouselRef.current;
+      const middleCard = container?.children[1] as HTMLElement | undefined;
+      if (!container || !middleCard) return;
+
+      container.scrollLeft =
+        middleCard.offsetLeft -
+        (container.clientWidth - middleCard.clientWidth) / 2;
+    });
+    return () => cancelAnimationFrame(frameId);
+  }, []);
 
   return (
     <div className="w-full bg-[var(--bg)] pt-28 pb-16 sm:pt-36 sm:pb-24 font-sans">
       <h1 className="sr-only">{copy.pageTitle}</h1>
 
-      {/* Section 1: Hero Banner & Editorial Intro */}
+      {/* Section 1: Scrollable Peek Banner Carousel & Editorial Intro */}
       <section aria-label={copy.introLabel} className="w-full pb-14 sm:pb-20">
-        <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
-          <div className="w-full aspect-[16/10] sm:aspect-[21/9] rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/60 flex items-center justify-center overflow-hidden p-6">
-            <p className="text-[14px] text-[var(--muted-text)] text-center">
-              {copy.placeholderLabel}
-            </p>
-          </div>
+        <div
+          ref={carouselRef}
+          className="w-full flex items-center gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {ABOUT_SLIDES.map((slideId, index) => (
+            <div
+              key={slideId}
+              className={`shrink-0 snap-center w-[82vw] sm:w-[76vw] max-w-[960px] rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/60 flex items-center justify-center overflow-hidden p-6 ${
+                index === 1
+                  ? "h-[240px] sm:h-[420px]"
+                  : "h-[210px] sm:h-[360px]"
+              }`}
+            >
+              <p className="text-[14px] text-[var(--muted-text)] text-center">
+                {copy.placeholderLabel}
+              </p>
+            </div>
+          ))}
+        </div>
 
+        <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
           <div className="mt-8 sm:mt-10">
             <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-[var(--fg-2)]">
               {copy.introEyebrow}
