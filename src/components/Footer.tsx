@@ -170,7 +170,12 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="relative w-full overflow-hidden">
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          aspectRatio: `${footerArtwork.width} / ${footerArtwork.height / 2}`,
+        }}
+      >
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 z-10 h-12 sm:h-20 bg-gradient-to-b from-[var(--bg)] to-transparent"

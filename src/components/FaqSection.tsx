@@ -127,12 +127,12 @@ export function FaqSection() {
         fill
         aria-hidden="true"
         sizes="100vw"
-        className="pointer-events-none -z-20 object-cover object-center opacity-10"
+        className="pointer-events-none hidden lg:block -z-20 object-cover object-center opacity-25"
       />
       {/* Seamless top and bottom fade while keeping background image clear */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,#ffffff_0%,rgba(255,255,255,0)_18%,rgba(255,255,255,0)_82%,#ffffff_100%)]"
+        className="pointer-events-none hidden lg:block absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,#ffffff_0%,rgba(255,255,255,0)_18%,rgba(255,255,255,0)_82%,#ffffff_100%)]"
       />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8">
