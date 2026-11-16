@@ -54,12 +54,8 @@ const COLUMNS: FooterColumn[] = [
       { label: { id: "Daftar Armada", en: "Car List" }, href: "/mobil" },
       { label: { id: "Tentang Kami", en: "About Us" }, href: "/tentang-kami" },
       {
-        label: { id: "Kebijakan Privasi", en: "Privacy Policy" },
-        href: "/kebijakan-privasi",
-      },
-      {
         label: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
-        href: "/syarat-ketentuan",
+        href: "/#faq",
       },
     ],
   },

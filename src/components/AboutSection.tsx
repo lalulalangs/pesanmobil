@@ -465,10 +465,10 @@ export function AboutSection() {
                       onClick={() => scrollToHighlight(index)}
                       aria-label={`${card.title[locale]} (${index + 1}/${HIGHLIGHT_CARDS.length})`}
                       aria-current={activeHighlight === index ? "true" : undefined}
-                      className={`h-1.5 rounded-full transition-all duration-200 ${
+                      className={`h-2 rounded-full transition-all duration-200 ${
                         activeHighlight === index
-                          ? "w-5 bg-[var(--brand)]"
-                          : "w-1.5 bg-[var(--border)]"
+                          ? "w-6 bg-gradient-to-b from-[#fb923c] to-[#ea580c] border border-[#ea580c] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(234,88,12,0.25)]"
+                          : "w-2 bg-[var(--border)]"
                       }`}
                     />
                   ))}
