@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [60, 75],
   },
   turbopack: {
     rules: {
