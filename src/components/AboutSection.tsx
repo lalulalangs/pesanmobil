@@ -351,14 +351,14 @@ export function AboutSection() {
         <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:items-stretch">
             {/* Left Tall Visual Card */}
-            <article className="lg:col-span-5 relative rounded-2xl overflow-hidden bg-[var(--fg)] text-white p-6 sm:p-8 flex flex-col justify-between min-h-[380px] sm:min-h-[460px]">
+            <article className="lg:col-span-5 relative rounded-2xl overflow-hidden bg-[var(--fg)] text-white p-6 sm:p-8 flex flex-col justify-between min-h-[260px] sm:min-h-[320px] lg:min-h-[460px]">
               <div className="relative z-10 flex items-start justify-between">
                 <span className={HERO_PILL_CLASS}>
                   {copy.whyEyebrow}
                 </span>
               </div>
 
-              <p className="my-12 text-center text-[13px] text-white/50">
+              <p className="my-6 sm:my-8 lg:my-12 text-center text-[13px] text-white/50">
                 {copy.placeholderLabel}
               </p>
 
@@ -372,14 +372,14 @@ export function AboutSection() {
               </div>
             </article>
 
-            {/* Right 2x2 Cards */}
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Right 2x2 Cards (Horizontal Snap on < sm, Grid on sm+) */}
+            <div className="lg:col-span-7 -mx-5 px-5 sm:mx-0 sm:px-0 flex sm:grid sm:grid-cols-2 gap-3 sm:gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none scroll-pl-5 overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {HIGHLIGHT_CARDS.map((card) => {
                 const Icon = card.icon;
                 return (
                   <article
                     key={card.id}
-                    className={`rounded-2xl p-6 sm:p-7 flex flex-col justify-between gap-10 border ${
+                    className={`shrink-0 w-[78vw] max-w-[300px] sm:w-auto sm:max-w-none snap-start rounded-2xl p-5 sm:p-7 flex flex-col justify-between gap-6 sm:gap-10 border ${
                       card.accent
                         ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] border-[#009cde] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.22)] text-[var(--fg)]"
                         : "bg-[var(--bg)] border-[var(--border)]/80 shadow-[0_2px_12px_rgba(29,29,31,0.04)] text-[var(--fg)]"
@@ -397,11 +397,11 @@ export function AboutSection() {
                     </span>
 
                     <div>
-                      <h3 className="text-[20px] font-semibold tracking-tight leading-snug text-[var(--fg)]">
+                      <h3 className="text-[18px] sm:text-[20px] font-semibold tracking-tight leading-snug text-[var(--fg)]">
                         {card.title[locale]}
                       </h3>
                       <p
-                        className={`mt-2.5 text-[14px] leading-relaxed ${
+                        className={`mt-2 sm:mt-2.5 text-[14px] leading-relaxed ${
                           card.accent
                             ? "text-[var(--fg)]/85"
                             : "text-[var(--muted-text)]"
