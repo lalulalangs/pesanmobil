@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import footerArtwork from "../../assets/dibawah-footer.jpg";
+import footerArtwork from "../../assets/dibawah-footer.webp";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 
 interface FooterLink {
