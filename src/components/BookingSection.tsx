@@ -161,6 +161,15 @@ function formatDisplayDate(isoDate: string): string {
   return `${day}/${month}/${year}`;
 }
 
+function getCurrentTimeSlot(): string {
+  const now = new Date();
+  const totalMinutes = now.getHours() * 60 + now.getMinutes();
+  const roundedMinutes = Math.min(23 * 60 + 30, Math.ceil(totalMinutes / 30) * 30);
+  const hour = String(Math.floor(roundedMinutes / 60)).padStart(2, "0");
+  const minute = String(roundedMinutes % 60).padStart(2, "0");
+  return `${hour}:${minute}`;
+}
+
 export function BookingSection() {
   const { locale } = useLanguage();
   const copy = COPY[locale];
@@ -187,8 +196,11 @@ export function BookingSection() {
 
   useEffect(() => {
     const frameId = requestAnimationFrame(() => {
-      setPickupDate((prev) => prev || getOffsetDateInput(1));
-      setReturnDate((prev) => prev || getOffsetDateInput(3));
+      const currentSlot = getCurrentTimeSlot();
+      setPickupDate((prev) => prev || getOffsetDateInput(0));
+      setReturnDate((prev) => prev || getOffsetDateInput(2));
+      setPickupTime(currentSlot);
+      setReturnTime(currentSlot);
     });
     return () => cancelAnimationFrame(frameId);
   }, []);
