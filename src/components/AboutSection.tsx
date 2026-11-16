@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
@@ -167,6 +167,38 @@ export function AboutSection() {
   const slideRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const goToOffsetRef = useRef<(delta: number) => void>(() => {});
   const goToIndexRef = useRef<(index: number) => void>(() => {});
+  const highlightRailRef = useRef<HTMLDivElement>(null);
+  const highlightCardRefs = useRef<(HTMLElement | null)[]>([]);
+  const [activeHighlight, setActiveHighlight] = useState(0);
+
+  const handleHighlightScroll = () => {
+    const rail = highlightRailRef.current;
+    if (!rail) return;
+    const scrollLeft = rail.scrollLeft;
+    let closestIndex = 0;
+    let minDistance = Infinity;
+    highlightCardRefs.current.forEach((card, index) => {
+      if (!card) return;
+      const offset = card.offsetLeft - rail.offsetLeft - 20;
+      const distance = Math.abs(offset - scrollLeft);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+    setActiveHighlight(closestIndex);
+  };
+
+  const scrollToHighlight = (index: number) => {
+    const rail = highlightRailRef.current;
+    const card = highlightCardRefs.current[index];
+    if (!rail || !card) return;
+    setActiveHighlight(index);
+    rail.scrollTo({
+      left: card.offsetLeft - rail.offsetLeft - 20,
+      behavior: "smooth",
+    });
+  };
 
   useGSAP(
     () => {
@@ -373,46 +405,102 @@ export function AboutSection() {
             </article>
 
             {/* Right 2x2 Cards (Horizontal Snap on < sm, Grid on sm+) */}
-            <div className="lg:col-span-7 -mx-5 px-5 sm:mx-0 sm:px-0 flex sm:grid sm:grid-cols-2 gap-3 sm:gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none scroll-pl-5 overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {HIGHLIGHT_CARDS.map((card) => {
-                const Icon = card.icon;
-                return (
-                  <article
-                    key={card.id}
-                    className={`shrink-0 w-[78vw] max-w-[300px] sm:w-auto sm:max-w-none snap-start rounded-2xl p-5 sm:p-7 flex flex-col justify-between gap-6 sm:gap-10 border ${
-                      card.accent
-                        ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] border-[#009cde] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.22)] text-[var(--fg)]"
-                        : "bg-[var(--bg)] border-[var(--border)]/80 shadow-[0_2px_12px_rgba(29,29,31,0.04)] text-[var(--fg)]"
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`inline-flex h-11 w-11 items-center justify-center rounded-full ${
+            <div className="lg:col-span-7">
+              <div
+                ref={highlightRailRef}
+                onScroll={handleHighlightScroll}
+                className="-mx-5 px-5 sm:mx-0 sm:px-0 flex sm:grid sm:grid-cols-2 gap-3 sm:gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none scroll-pl-5 overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {HIGHLIGHT_CARDS.map((card, index) => {
+                  const Icon = card.icon;
+                  return (
+                    <article
+                      key={card.id}
+                      ref={(el) => {
+                        highlightCardRefs.current[index] = el;
+                      }}
+                      className={`shrink-0 w-[78vw] max-w-[300px] sm:w-auto sm:max-w-none snap-start rounded-2xl p-5 sm:p-7 flex flex-col justify-between gap-6 sm:gap-10 border ${
                         card.accent
-                          ? "bg-[var(--fg)] text-white"
-                          : "bg-[#f4f4f5] text-[var(--fg)]"
+                          ? "bg-gradient-to-b from-[#38bdf8] to-[#009cde] border-[#009cde] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.22)] text-[var(--fg)]"
+                          : "bg-[var(--bg)] border-[var(--border)]/80 shadow-[0_2px_12px_rgba(29,29,31,0.04)] text-[var(--fg)]"
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
-                    </span>
-
-                    <div>
-                      <h3 className="text-[18px] sm:text-[20px] font-semibold tracking-tight leading-snug text-[var(--fg)]">
-                        {card.title[locale]}
-                      </h3>
-                      <p
-                        className={`mt-2 sm:mt-2.5 text-[14px] leading-relaxed ${
+                      <span
+                        aria-hidden="true"
+                        className={`inline-flex h-11 w-11 items-center justify-center rounded-full ${
                           card.accent
-                            ? "text-[var(--fg)]/85"
-                            : "text-[var(--muted-text)]"
+                            ? "bg-[var(--fg)] text-white"
+                            : "bg-[#f4f4f5] text-[var(--fg)]"
                         }`}
                       >
-                        {card.description[locale]}
-                      </p>
-                    </div>
-                  </article>
-                );
-              })}
+                        <Icon className="w-5 h-5" />
+                      </span>
+
+                      <div>
+                        <h3 className="text-[18px] sm:text-[20px] font-semibold tracking-tight leading-snug text-[var(--fg)]">
+                          {card.title[locale]}
+                        </h3>
+                        <p
+                          className={`mt-2 sm:mt-2.5 text-[14px] leading-relaxed ${
+                            card.accent
+                              ? "text-[var(--fg)]/85"
+                              : "text-[var(--muted-text)]"
+                          }`}
+                        >
+                          {card.description[locale]}
+                        </p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* Mobile dots & arrow controls */}
+              <div className="mt-4 flex sm:hidden items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  {HIGHLIGHT_CARDS.map((card, index) => (
+                    <button
+                      key={card.id}
+                      type="button"
+                      onClick={() => scrollToHighlight(index)}
+                      aria-label={`${card.title[locale]} (${index + 1}/${HIGHLIGHT_CARDS.length})`}
+                      aria-current={activeHighlight === index ? "true" : undefined}
+                      className={`h-1.5 rounded-full transition-all duration-200 ${
+                        activeHighlight === index
+                          ? "w-5 bg-[var(--brand)]"
+                          : "w-1.5 bg-[var(--border)]"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scrollToHighlight(Math.max(0, activeHighlight - 1))
+                    }
+                    disabled={activeHighlight === 0}
+                    aria-label={copy.prevSlideAria}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--fg)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                  >
+                    <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scrollToHighlight(
+                        Math.min(HIGHLIGHT_CARDS.length - 1, activeHighlight + 1)
+                      )
+                    }
+                    disabled={activeHighlight === HIGHLIGHT_CARDS.length - 1}
+                    aria-label={copy.nextSlideAria}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--fg)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                  >
+                    <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
