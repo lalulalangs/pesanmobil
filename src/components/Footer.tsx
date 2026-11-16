@@ -180,7 +180,7 @@ export function Footer() {
           alt=""
           aria-hidden="true"
           sizes="100vw"
-          className="w-full h-auto max-h-[440px] object-cover object-top block"
+          className="w-full h-auto block"
         />
       </div>
     </footer>
