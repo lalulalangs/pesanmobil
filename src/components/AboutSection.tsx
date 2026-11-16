@@ -16,6 +16,9 @@ import { useLanguage, type Locale } from "@/components/LanguageProvider";
 
 gsap.registerPlugin(useGSAP, Observer);
 
+const HERO_PILL_CLASS =
+  "inline-flex items-center rounded-full bg-gradient-to-b from-[#fb923c] to-[#ea580c] border border-[#ea580c] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] px-4 py-1.5 text-[11px] font-button font-medium uppercase tracking-wider text-[#1d1d1f]";
+
 const ABOUT_SLIDES = [
   "about-slide-1",
   "about-slide-2",
@@ -308,7 +311,7 @@ export function AboutSection() {
         <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
 
           <div className="mt-8 sm:mt-10">
-            <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-[var(--fg-2)]">
+            <span className={HERO_PILL_CLASS}>
               {copy.introEyebrow}
             </span>
 
@@ -346,7 +349,7 @@ export function AboutSection() {
             {/* Left Tall Visual Card */}
             <article className="lg:col-span-5 relative rounded-2xl overflow-hidden bg-[var(--fg)] text-white p-6 sm:p-8 flex flex-col justify-between min-h-[380px] sm:min-h-[460px]">
               <div className="relative z-10 flex items-start justify-between">
-                <span className="inline-flex items-center rounded-full border border-white/40 px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-white">
+                <span className={HERO_PILL_CLASS}>
                   {copy.whyEyebrow}
                 </span>
               </div>
