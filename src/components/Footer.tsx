@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import footerArtwork from "../../assets/dibawah-footer.webp";
+import footerArtwork from "../../assets/footer-new.webp";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 
 interface FooterLink {
@@ -166,12 +166,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div
-        className="relative w-full overflow-hidden"
-        style={{
-          aspectRatio: `${footerArtwork.width} / ${footerArtwork.height * 0.7}`,
-        }}
-      >
+      <div className="relative w-full overflow-hidden">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 z-10 h-12 sm:h-20 bg-gradient-to-b from-[var(--bg)] to-transparent"
