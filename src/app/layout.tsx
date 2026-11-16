@@ -21,6 +21,11 @@ const switzer = localFont({
 
 export const metadata: Metadata = {
   title: "pesanmobil.com: Sewa Mobil Lepas Kunci dan dengan Pengemudi",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   description:
     "Pesan rental mobil mudah, cepat, dan terpercaya. Pilihan sewa mobil harian, mingguan, bulanan lepas kunci atau dengan supir profesional. Armada bersih, prima, dan siap jalan.",
   keywords: [

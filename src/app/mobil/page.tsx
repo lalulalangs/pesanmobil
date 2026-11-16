@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FleetSection } from "@/components/FleetSection";
 
 export const metadata: Metadata = {
-  title: "Daftar Unit — pesanmobil.com",
+  title: "Daftar Unit | pesanmobil.com",
   description:
     "Pilihan unit mobil dan motor lepas kunci maupun dengan pengemudi profesional di pesanmobil.com.",
 };
