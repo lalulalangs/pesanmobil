@@ -17,7 +17,7 @@ import { useLanguage, type Locale } from "@/components/LanguageProvider";
 gsap.registerPlugin(useGSAP, Observer);
 
 const HERO_PILL_CLASS =
-  "inline-flex items-center rounded-full bg-gradient-to-b from-[#fb923c] to-[#ea580c] border border-[#ea580c] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] px-4 py-1.5 text-[11px] font-button font-medium uppercase tracking-wider text-[#1d1d1f]";
+  "inline-flex items-center rounded-full bg-gradient-to-b from-[#fb923c] to-[#ea580c] border border-[#ea580c] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] px-4 py-1.5 text-[13px] font-button font-medium text-[#1d1d1f]";
 
 const ABOUT_SLIDES = [
   "about-slide-1",
@@ -116,7 +116,7 @@ const COPY: Record<Locale, AboutCopy> = {
   id: {
     pageTitle: "Tentang pesanmobil.com",
     introLabel: "Tentang kami",
-    introEyebrow: "KENAL LEBIH DEKAT",
+    introEyebrow: "Kenal Lebih Dekat",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     p1Before: "Selamat datang di pesanmobil.com, tempat di mana ",
     p1Strong1: "perjalanan nyaman dimulai dari unit yang tepat untukmu.",
@@ -127,7 +127,7 @@ const COPY: Record<Locale, AboutCopy> = {
     p2Middle: " Cukup pilih unit dan jadwalnya, lalu ",
     p2Strong2: "tim kami bantu bereskan semuanya lewat WhatsApp.",
     whyLabel: "Keunggulan layanan",
-    whyEyebrow: "KENAPA PILIH KAMI",
+    whyEyebrow: "Kenapa Pilih Kami",
     whyTitle: "Perjalanan lebih tenang di setiap rute",
     whyDescription:
       "Dari pengecekan unit hingga pengantaran ke titik jemput, semuanya kami tangani satu pintu agar kamu tinggal fokus menikmati perjalanan.",
@@ -138,7 +138,7 @@ const COPY: Record<Locale, AboutCopy> = {
   en: {
     pageTitle: "About pesanmobil.com",
     introLabel: "About us",
-    introEyebrow: "KNOW MORE ABOUT US",
+    introEyebrow: "Know More About Us",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     p1Before: "Welcome to pesanmobil.com, where ",
     p1Strong1: "a comfortable journey starts with the right vehicle.",
@@ -149,7 +149,7 @@ const COPY: Record<Locale, AboutCopy> = {
     p2Middle: " Pick your unit and schedule, and ",
     p2Strong2: "our team handles the rest with you on WhatsApp.",
     whyLabel: "Why choose us",
-    whyEyebrow: "WHY CHOOSE US",
+    whyEyebrow: "Why Choose Us",
     whyTitle: "Charting a smoother trip on every route",
     whyDescription:
       "From vehicle prep to on-time delivery at your pick-up point, everything is coordinated in one place so you can travel with peace of mind.",
