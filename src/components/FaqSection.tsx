@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import faqBg from "../../assets/mas-amba-bingung-loh-ya.jpg";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 import {
   Accordion,
@@ -119,23 +117,9 @@ export function FaqSection() {
     <section
       id="faq"
       aria-label={copy.sectionLabel}
-      className="relative isolate overflow-hidden w-full bg-[var(--bg)] py-14 sm:py-24 font-sans"
+      className="w-full bg-[var(--bg)] py-14 sm:py-24 font-sans"
     >
-      <Image
-        src={faqBg}
-        alt=""
-        fill
-        aria-hidden="true"
-        sizes="100vw"
-        className="pointer-events-none hidden lg:block -z-20 object-cover object-center opacity-25"
-      />
-      {/* Seamless top and bottom fade while keeping background image clear */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none hidden lg:block absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,#ffffff_0%,rgba(255,255,255,0)_18%,rgba(255,255,255,0)_82%,#ffffff_100%)]"
-      />
-
-      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8">
+      <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column: Headline top, Support CTA bottom */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-8">
