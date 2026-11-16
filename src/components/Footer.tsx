@@ -37,7 +37,7 @@ const COLUMNS: FooterColumn[] = [
       { label: { id: "Sewa Mobil Lepas Kunci", en: "Self-Drive Car" }, href: "/#armada" },
       { label: { id: "Sewa Motor Lepas Kunci", en: "Self-Drive Motorbike" }, href: "/#armada" },
       { label: { id: "Sewa Dengan Pengemudi", en: "With Driver" }, href: "/#armada" },
-      { label: { id: "Paket Wisata", en: "Tour Packages" }, href: "/#armada" },
+      { label: { id: "Paket Wisata", en: "Tour Packages" }, href: "/paket-wisata" },
     ],
   },
   {

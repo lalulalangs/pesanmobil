@@ -7,7 +7,6 @@ import {
   Bike,
   Briefcase,
   Car,
-  Clock,
   Gauge,
   Settings2,
   Users,
@@ -16,7 +15,7 @@ import { useLanguage, type Locale } from "@/components/LanguageProvider";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type ServiceTab = "lepas-kunci" | "private" | "paket-wisata";
+type ServiceTab = "lepas-kunci" | "private";
 type VehicleType = "mobil" | "motor";
 type TransmissionType = "auto-manual" | "automatic" | "manual";
 
@@ -31,8 +30,6 @@ interface FleetItem {
   luggage?: number;
   engineCc?: string;
   helmets?: number;
-  duration?: Record<Locale, string>;
-  unitInfo?: string;
   priceIdr: string;
 }
 
@@ -212,47 +209,6 @@ export const FLEET_ITEMS: FleetItem[] = [
     luggage: 4,
     priceIdr: "Rp 2.250.000",
   },
-  // Paket Wisata
-  {
-    id: "tour-city",
-    service: "paket-wisata",
-    name: "Paket City Tour",
-    category: "City Tour",
-    duration: { id: "10 jam", en: "10 hours" },
-    seats: 6,
-    unitInfo: "Avanza / Xpander",
-    priceIdr: "Rp 750.000",
-  },
-  {
-    id: "tour-fullday",
-    service: "paket-wisata",
-    name: "Paket Wisata Full Day",
-    category: "Full Day",
-    duration: { id: "12 jam", en: "12 hours" },
-    seats: 6,
-    unitInfo: "Innova Reborn",
-    priceIdr: "Rp 950.000",
-  },
-  {
-    id: "tour-2d1n",
-    service: "paket-wisata",
-    name: "Paket Wisata 2H1M",
-    category: "Overnight",
-    duration: { id: "2H1M", en: "2D1N" },
-    seats: 6,
-    unitInfo: "Innova Zenix",
-    priceIdr: "Rp 1.950.000",
-  },
-  {
-    id: "tour-group",
-    service: "paket-wisata",
-    name: "Paket Rombongan Hiace",
-    category: "Group Tour",
-    duration: { id: "12 jam", en: "12 hours" },
-    seats: 14,
-    unitInfo: "Toyota Hiace",
-    priceIdr: "Rp 1.550.000",
-  },
 ];
 
 interface FleetCopy {
@@ -265,15 +221,12 @@ interface FleetCopy {
   vehicleTypes: Record<VehicleType, string>;
   startFrom: string;
   perDay: string;
-  perPackage: string;
   withDriverNote: string;
   seeMore: string;
-  detailLabel: string;
   placeholderLabel: string;
   seatsLabel: (count: number) => string;
   luggageLabel: (count: number) => string;
   helmetsLabel: (count: number) => string;
-  maxPassengers: (count: number) => string;
   transmissionLabels: Record<TransmissionType, string>;
 }
 
@@ -288,7 +241,6 @@ const COPY: Record<Locale, FleetCopy> = {
     tabs: {
       "lepas-kunci": "Lepas Kunci",
       private: "Private",
-      "paket-wisata": "Paket Wisata",
     },
     vehicleTypes: {
       mobil: "Mobil",
@@ -296,15 +248,12 @@ const COPY: Record<Locale, FleetCopy> = {
     },
     startFrom: "Mulai dari",
     perDay: "/ hari",
-    perPackage: "/ paket",
     withDriverNote: "Termasuk supir",
     seeMore: "Lihat Semua",
-    detailLabel: "Detail",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} kursi`,
     luggageLabel: (count) => `${count} bagasi`,
     helmetsLabel: (count) => `${count} helm`,
-    maxPassengers: (count) => `Maks. ${count} orang`,
     transmissionLabels: {
       "auto-manual": "Matic/Manual",
       automatic: "Matic",
@@ -321,7 +270,6 @@ const COPY: Record<Locale, FleetCopy> = {
     tabs: {
       "lepas-kunci": "Self-Drive",
       private: "Private Driver",
-      "paket-wisata": "Tour Package",
     },
     vehicleTypes: {
       mobil: "Car",
@@ -329,15 +277,12 @@ const COPY: Record<Locale, FleetCopy> = {
     },
     startFrom: "Start from",
     perDay: "/ day",
-    perPackage: "/ package",
     withDriverNote: "With driver",
     seeMore: "See More",
-    detailLabel: "Details",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} seats`,
     luggageLabel: (count) => `${count} luggage`,
     helmetsLabel: (count) => `${count} helmets`,
-    maxPassengers: (count) => `Max ${count} pax`,
     transmissionLabels: {
       "auto-manual": "Automatic/Manual",
       automatic: "Automatic",
@@ -359,11 +304,7 @@ export function FleetSection() {
   };
 
   const handleTabChange = (nextValue: string | null) => {
-    if (
-      nextValue === "lepas-kunci" ||
-      nextValue === "private" ||
-      nextValue === "paket-wisata"
-    ) {
+    if (nextValue === "lepas-kunci" || nextValue === "private") {
       setServiceTab(nextValue);
       resetCarouselScroll();
     }
@@ -407,10 +348,9 @@ export function FleetSection() {
           <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:min-h-[44px]">
             <TabsList
               aria-label={copy.tabsAria}
-              className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex rounded-full bg-[#f4f4f5] p-1 h-10 sm:h-11 group-data-horizontal/tabs:h-10 sm:group-data-horizontal/tabs:h-11"
+              className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex rounded-full bg-[#f4f4f5] p-1 h-10 sm:h-11 group-data-horizontal/tabs:h-10 sm:group-data-horizontal/tabs:h-11"
             >
-              {(["lepas-kunci", "private", "paket-wisata"] as ServiceTab[]).map(
-                (tabKey) => (
+              {(["lepas-kunci", "private"] as ServiceTab[]).map((tabKey) => (
                   <TabsTrigger
                     key={tabKey}
                     value={tabKey}
@@ -418,8 +358,7 @@ export function FleetSection() {
                   >
                     {copy.tabs[tabKey]}
                   </TabsTrigger>
-                )
-              )}
+              ))}
             </TabsList>
 
             {serviceTab === "lepas-kunci" && (
@@ -490,29 +429,7 @@ export function FleetSection() {
                   {vehicle.name}
                 </h3>
 
-                {vehicle.service === "paket-wisata" ? (
-                  <>
-                    <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
-                      <Clock
-                        className="w-3.5 h-3.5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <span>{vehicle.duration?.[locale]}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-[13px] text-[var(--muted-text)]">
-                      {vehicle.seats && (
-                        <span className="inline-flex items-center gap-1.5">
-                          <Users
-                            className="w-3.5 h-3.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span>{copy.maxPassengers(vehicle.seats)}</span>
-                        </span>
-                      )}
-                      {vehicle.unitInfo && <span>· {vehicle.unitInfo}</span>}
-                    </div>
-                  </>
-                ) : vehicle.vehicleType === "motor" ? (
+                {vehicle.vehicleType === "motor" ? (
                   <>
                     <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
                       <Settings2
@@ -592,33 +509,10 @@ export function FleetSection() {
                   <p className="mt-0.5 text-[18px] font-semibold text-[var(--fg)] leading-tight">
                     {vehicle.priceIdr}{" "}
                     <span className="text-[13px] font-normal text-[var(--muted-text)]">
-                      {vehicle.service === "paket-wisata"
-                        ? copy.perPackage
-                        : copy.perDay}
+                      {copy.perDay}
                     </span>
                   </p>
                 </div>
-
-                {vehicle.service === "paket-wisata" && (
-                  <div className="mt-2.5">
-                    <Button
-                      variant="default"
-                      nativeButton={false}
-                      render={
-                        <Link
-                          href={`/mobil?layanan=paket-wisata&paket=${vehicle.id}`}
-                        />
-                      }
-                      className="h-9 w-full gap-1.5 rounded-full px-4 text-[13px] font-medium ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] border-[#009cde] focus-visible:border-[#009cde] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)]"
-                    >
-                      <span>{copy.detailLabel}</span>
-                      <ArrowRight
-                        className="w-3.5 h-3.5 shrink-0"
-                        aria-hidden="true"
-                      />
-                    </Button>
-                  </div>
-                )}
               </div>
             </article>
           ))}
