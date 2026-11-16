@@ -291,7 +291,15 @@ const COPY: Record<Locale, FleetCopy> = {
   },
 };
 
-export function FleetSection() {
+export interface FleetSectionProps {
+  showSeeMore?: boolean;
+  standalone?: boolean;
+}
+
+export function FleetSection({
+  showSeeMore = true,
+  standalone = false,
+}: FleetSectionProps = {}) {
   const { locale } = useLanguage();
   const copy = COPY[locale];
 
@@ -328,17 +336,21 @@ export function FleetSection() {
       ? `/mobil?layanan=lepas-kunci&jenis=${vehicleType}`
       : `/mobil?layanan=${serviceTab}`;
 
+  const HeadingTag = standalone ? "h1" : "h2";
+
   return (
     <section
       id="armada"
       aria-label={copy.sectionLabel}
-      className="w-full bg-[var(--bg)] py-14 sm:py-20 font-sans"
+      className={`w-full bg-[var(--bg)] font-sans ${
+        standalone ? "pt-28 pb-16 sm:pt-36 sm:pb-24" : "py-14 sm:py-20"
+      }`}
     >
       <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
         <div className="mb-6 sm:mb-8">
-          <h2 className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
+          <HeadingTag className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-[var(--fg)] leading-tight">
             {copy.title}
-          </h2>
+          </HeadingTag>
           <p className="mt-2 text-[15px] sm:text-[16px] text-[var(--muted-text)] max-w-[60ch]">
             {copy.subtitle}
           </p>
@@ -518,7 +530,7 @@ export function FleetSection() {
           ))}
         </div>
 
-        {filteredItems.length > 6 && (
+        {showSeeMore && filteredItems.length > 6 && (
           <div className="mt-10 sm:mt-12 flex justify-center">
             <Button
               variant="default"
