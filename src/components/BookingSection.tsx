@@ -154,6 +154,13 @@ function getOffsetDateInput(daysFromToday: number): string {
   return `${year}-${month}-${day}`;
 }
 
+function formatDisplayDate(isoDate: string): string {
+  if (!isoDate) return "";
+  const [year, month, day] = isoDate.split("-");
+  if (!year || !month || !day) return isoDate;
+  return `${day}/${month}/${year}`;
+}
+
 export function BookingSection() {
   const { locale } = useLanguage();
   const copy = COPY[locale];
@@ -227,21 +234,24 @@ export function BookingSection() {
       ? `${selectedUnit.name} (${selectedUnit.priceIdr}${copy.perDay})`
       : copy.missingUnitFallback;
 
+    const formattedPickupDate = formatDisplayDate(pickupDate) || pickupDate;
+    const formattedReturnDate = formatDisplayDate(returnDate) || returnDate;
+
     const message =
       locale === "id"
         ? [
             "Halo pesanmobil.com, saya mau booking unit dengan detail berikut:",
             `- Lokasi Penjemputan: ${locationText}`,
-            `- Ambil: ${pickupDate} pukul ${pickupTime}`,
-            `- Kembali: ${returnDate} pukul ${returnTime}`,
+            `- Ambil: ${formattedPickupDate} pukul ${pickupTime}`,
+            `- Kembali: ${formattedReturnDate} pukul ${returnTime}`,
             `- Opsi: ${modeText}`,
             `- Unit: ${unitText}`,
           ].join("\n")
         : [
             "Hello pesanmobil.com, I would like to book a vehicle with these details:",
             `- Pick Up Location: ${locationText}`,
-            `- Pick Up: ${pickupDate} at ${pickupTime}`,
-            `- Return: ${returnDate} at ${returnTime}`,
+            `- Pick Up: ${formattedPickupDate} at ${pickupTime}`,
+            `- Return: ${formattedReturnDate} at ${returnTime}`,
             `- Option: ${modeText}`,
             `- Unit: ${unitText}`,
           ].join("\n");
@@ -329,14 +339,26 @@ export function BookingSection() {
                   className="w-4 h-4 shrink-0 text-[var(--muted-text)]"
                   aria-hidden="true"
                 />
-                <Input
-                  id="pickup-date"
-                  type="date"
-                  value={pickupDate}
-                  onChange={(e) => setPickupDate(e.target.value)}
-                  required
-                  className="border-0 bg-transparent px-0 h-auto shadow-none focus-visible:ring-0 focus-visible:border-transparent text-[13px] sm:text-[14px] text-[var(--fg)] flex-1 min-w-0"
-                />
+                <div className="relative flex-1 min-w-0 flex items-center">
+                  <span
+                    className={`text-[13px] sm:text-[14px] tabular-nums select-none ${
+                      pickupDate
+                        ? "text-[var(--fg)]"
+                        : "text-[var(--muted-text)]"
+                    }`}
+                  >
+                    {pickupDate ? formatDisplayDate(pickupDate) : "dd/mm/yyyy"}
+                  </span>
+                  <Input
+                    id="pickup-date"
+                    type="date"
+                    value={pickupDate}
+                    onChange={(e) => setPickupDate(e.target.value)}
+                    onClick={(e) => e.currentTarget.showPicker?.()}
+                    required
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer border-0 px-0 shadow-none focus-visible:ring-0"
+                  />
+                </div>
                 <span
                   className="h-5 w-px bg-[var(--border)] shrink-0"
                   aria-hidden="true"
@@ -387,16 +409,28 @@ export function BookingSection() {
                   className="w-4 h-4 shrink-0 text-[var(--muted-text)]"
                   aria-hidden="true"
                 />
-                <Input
-                  id="return-date"
-                  type="date"
-                  value={returnDate}
-                  min={pickupDate || undefined}
-                  onChange={(e) => setReturnDate(e.target.value)}
-                  required
-                  aria-invalid={showWarning}
-                  className="border-0 bg-transparent px-0 h-auto shadow-none focus-visible:ring-0 focus-visible:border-transparent aria-invalid:ring-0 aria-invalid:border-transparent text-[13px] sm:text-[14px] text-[var(--fg)] flex-1 min-w-0"
-                />
+                <div className="relative flex-1 min-w-0 flex items-center">
+                  <span
+                    className={`text-[13px] sm:text-[14px] tabular-nums select-none ${
+                      returnDate
+                        ? "text-[var(--fg)]"
+                        : "text-[var(--muted-text)]"
+                    }`}
+                  >
+                    {returnDate ? formatDisplayDate(returnDate) : "dd/mm/yyyy"}
+                  </span>
+                  <Input
+                    id="return-date"
+                    type="date"
+                    value={returnDate}
+                    min={pickupDate || undefined}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    onClick={(e) => e.currentTarget.showPicker?.()}
+                    required
+                    aria-invalid={showWarning}
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer border-0 px-0 shadow-none focus-visible:ring-0 aria-invalid:ring-0 aria-invalid:border-transparent"
+                  />
+                </div>
                 <span
                   className="h-5 w-px bg-[var(--border)] shrink-0"
                   aria-hidden="true"
