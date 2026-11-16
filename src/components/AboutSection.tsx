@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
@@ -169,24 +169,37 @@ export function AboutSection() {
   const goToIndexRef = useRef<(index: number) => void>(() => {});
   const highlightRailRef = useRef<HTMLDivElement>(null);
   const highlightCardRefs = useRef<(HTMLElement | null)[]>([]);
+  const highlightRafRef = useRef<number | null>(null);
   const [activeHighlight, setActiveHighlight] = useState(0);
 
-  const handleHighlightScroll = () => {
-    const rail = highlightRailRef.current;
-    if (!rail) return;
-    const scrollLeft = rail.scrollLeft;
-    let closestIndex = 0;
-    let minDistance = Infinity;
-    highlightCardRefs.current.forEach((card, index) => {
-      if (!card) return;
-      const offset = card.offsetLeft - rail.offsetLeft - 20;
-      const distance = Math.abs(offset - scrollLeft);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = index;
+  useEffect(() => {
+    return () => {
+      if (highlightRafRef.current !== null) {
+        cancelAnimationFrame(highlightRafRef.current);
       }
+    };
+  }, []);
+
+  const handleHighlightScroll = () => {
+    if (highlightRafRef.current !== null) return;
+    highlightRafRef.current = requestAnimationFrame(() => {
+      highlightRafRef.current = null;
+      const rail = highlightRailRef.current;
+      if (!rail) return;
+      const scrollLeft = rail.scrollLeft;
+      const baseLeft = rail.offsetLeft + 20;
+      let closestIndex = 0;
+      let minDistance = Infinity;
+      highlightCardRefs.current.forEach((card, index) => {
+        if (!card) return;
+        const distance = Math.abs(card.offsetLeft - baseLeft - scrollLeft);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestIndex = index;
+        }
+      });
+      setActiveHighlight(closestIndex);
     });
-    setActiveHighlight(closestIndex);
   };
 
   const scrollToHighlight = (index: number) => {
@@ -214,13 +227,12 @@ export function AboutSection() {
         "(prefers-reduced-motion: reduce)"
       ).matches;
 
-      const getStepPx = () => {
-        const cardWidth = slides[0]?.offsetWidth || 680;
-        return cardWidth * 0.94;
+      let stepPx = (slides[0]?.offsetWidth || 680) * 0.94;
+      const measureStepPx = () => {
+        stepPx = (slides[0]?.offsetWidth || 680) * 0.94;
       };
 
       const render = () => {
-        const stepPx = getStepPx();
         slides.forEach((slide, index) => {
           const rel = gsap.utils.wrap(-count / 2, count / 2, index - state.offset);
           const absRel = Math.abs(rel);
@@ -271,7 +283,6 @@ export function AboutSection() {
         lockAxis: true,
         dragMinimum: 6,
         onChangeX: (self) => {
-          const stepPx = getStepPx();
           const isWheel = self.event?.type === "wheel";
           state.offset += isWheel ? self.deltaX / stepPx : -self.deltaX / stepPx;
           render();
@@ -284,10 +295,19 @@ export function AboutSection() {
         },
       });
 
-      const onResize = () => render();
-      window.addEventListener("resize", onResize);
+      let resizeRafId: number | null = null;
+      const onResize = () => {
+        if (resizeRafId !== null) return;
+        resizeRafId = requestAnimationFrame(() => {
+          resizeRafId = null;
+          measureStepPx();
+          render();
+        });
+      };
+      window.addEventListener("resize", onResize, { passive: true });
 
       return () => {
+        if (resizeRafId !== null) cancelAnimationFrame(resizeRafId);
         observer.kill();
         window.removeEventListener("resize", onResize);
       };
@@ -303,6 +323,7 @@ export function AboutSection() {
       <section aria-label={copy.introLabel} className="w-full pb-14 sm:pb-20">
         <div
           ref={trackRef}
+          data-lenis-prevent
           role="region"
           aria-roledescription="carousel"
           aria-label={copy.carouselAria}
@@ -317,7 +338,7 @@ export function AboutSection() {
               type="button"
               onClick={() => goToIndexRef.current(index)}
               aria-label={`Slide ${index + 1}`}
-              className="absolute left-1/2 top-[46%] w-[78vw] sm:w-[68vw] lg:w-[64vw] max-w-[820px] h-[200px] sm:h-[320px] lg:h-[400px] rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/70 flex items-center justify-center overflow-hidden p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+              className="opacity-0 absolute left-1/2 top-[46%] w-[78vw] sm:w-[68vw] lg:w-[64vw] max-w-[820px] h-[200px] sm:h-[320px] lg:h-[400px] rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/70 flex items-center justify-center overflow-hidden p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
             >
               <p className="text-[14px] text-[var(--muted-text)] text-center">
                 {copy.placeholderLabel}

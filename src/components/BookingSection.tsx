@@ -262,6 +262,7 @@ export function BookingSection() {
         src={bookingBg}
         alt=""
         fill
+        quality={60}
         aria-hidden="true"
         sizes="100vw"
         className="pointer-events-none -z-20 object-cover object-center"

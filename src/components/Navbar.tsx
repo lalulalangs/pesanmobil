@@ -40,7 +40,7 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 pt-3 sm:pt-4 font-sans">
       <nav
         aria-label={locale === "id" ? "Navigasi utama" : "Main navigation"}
-        className={`relative overflow-hidden mx-auto max-w-[1200px] transition-[background-color,border-color,box-shadow,padding,border-radius] duration-200 ${
+        className={`relative overflow-hidden mx-auto max-w-[1200px] transition-[background-color,border-color,box-shadow,border-radius] duration-200 ${
           isScrolled
             ? "rounded-full bg-white/95 md:bg-white/85 md:backdrop-blur-md border border-[var(--border)]/70 shadow-[0_2px_16px_rgba(29,29,31,0.06)] px-5 sm:px-6 py-2"
             : "rounded-none bg-transparent border border-transparent px-1 sm:px-2 py-2"
@@ -58,7 +58,6 @@ export function Navbar() {
               alt="pesanmobil.com"
               width={140}
               height={29}
-              priority
               className="h-5 sm:h-7 w-auto object-contain"
             />
           </Link>

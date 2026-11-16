@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { parseConfig, type GradientConfig } from "hazeglow";
+import type { GradientConfig } from "hazeglow";
 import { ArrowRight } from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export interface HeroCopy {
   ctaHref?: string;
 }
 
-export const DEFAULT_HERO_HAZEGLOW_CONFIG = parseConfig({
+export const DEFAULT_HERO_HAZEGLOW_CONFIG: GradientConfig = {
   version: 1,
   seed: 6,
   shape: "pill",
@@ -51,7 +51,7 @@ export const DEFAULT_HERO_HAZEGLOW_CONFIG = parseConfig({
   effect: "none",
   effectSize: 4,
   effectAmount: 0.15,
-});
+};
 
 export interface HeroSectionProps {
   title: string;
@@ -92,7 +92,7 @@ export function HeroSection({
   return (
     <section
       aria-label="Hero"
-      className={`relative isolate w-full h-[100svh] min-h-[100svh] overflow-hidden flex items-end justify-start bg-[var(--bg)] font-sans pt-20 pb-8 sm:pt-28 sm:pb-16 lg:pb-20 ${className}`}
+      className={`relative isolate w-full h-[100svh] min-h-[100svh] overflow-hidden flex items-end justify-start bg-[#fefefe] bg-[radial-gradient(ellipse_75%_65%_at_85%_82%,rgba(242,161,58,0.28),rgba(79,196,240,0.2)_55%,transparent_100%)] font-sans pt-20 pb-8 sm:pt-28 sm:pb-16 lg:pb-20 ${className}`}
     >
       <Hazeglow
         config={backgroundConfig}

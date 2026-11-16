@@ -16,15 +16,6 @@ const HERO_CONTENT = {
     "Halo pesanmobil.com, saya mau tanya ketersediaan unit sewa mobil."
   )}`,
   localizedCopy: {
-    id: {
-      title: "Perjalanan nyaman dimulai dari unit yang pas buat kamu",
-      subtitle:
-        "Pilih unit yang kamu mau, lalu kirim chat ke WhatsApp agar tim kami bantu siapkan unitnya",
-      ctaLabel: "Booking Sekarang",
-      ctaHref: `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        "Halo pesanmobil.com, saya mau tanya ketersediaan unit sewa mobil."
-      )}`,
-    },
     en: {
       title: "A comfortable journey starts with the right vehicle for you",
       subtitle:
