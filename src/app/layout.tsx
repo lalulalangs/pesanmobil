@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { Navbar } from "@/components/Navbar";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import tabIcon from "../../assets/1on1-logo.jpg";
 import "./globals.css";
 
 const geist = Geist({
@@ -22,9 +23,9 @@ const switzer = localFont({
 export const metadata: Metadata = {
   title: "pesanmobil.com: Sewa Mobil Lepas Kunci dan dengan Pengemudi",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: tabIcon.src,
+    shortcut: tabIcon.src,
+    apple: tabIcon.src,
   },
   description:
     "Pesan rental mobil mudah, cepat, dan terpercaya. Pilihan sewa mobil harian, mingguan, bulanan lepas kunci atau dengan supir profesional. Armada bersih, prima, dan siap jalan.",
