@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import localFont from "next/font/local";
+import { Footer } from "@/components/Footer";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { Navbar } from "@/components/Navbar";
 import { SmoothScroll } from "@/components/SmoothScroll";
@@ -53,6 +54,7 @@ export default function RootLayout({
           <SmoothScroll />
           <Navbar />
           {children}
+          <Footer />
         </LanguageProvider>
       </body>
     </html>
