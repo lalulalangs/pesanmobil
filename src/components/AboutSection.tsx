@@ -1,10 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { CheckCircle2, Clock, MapPin, ShieldCheck } from "lucide-react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { Observer } from "gsap/Observer";
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  ShieldCheck,
+} from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
 
-const ABOUT_SLIDES = ["slide-1", "slide-2", "slide-3"] as const;
+gsap.registerPlugin(useGSAP, Observer);
+
+const ABOUT_SLIDES = [
+  "about-slide-1",
+  "about-slide-2",
+  "about-slide-3",
+  "about-slide-4",
+  "about-slide-5",
+];
 
 interface HighlightCard {
   id: string;
@@ -86,6 +104,9 @@ interface AboutCopy {
   whyEyebrow: string;
   whyTitle: string;
   whyDescription: string;
+  carouselAria: string;
+  prevSlideAria: string;
+  nextSlideAria: string;
 }
 
 const COPY: Record<Locale, AboutCopy> = {
@@ -107,6 +128,9 @@ const COPY: Record<Locale, AboutCopy> = {
     whyTitle: "Perjalanan lebih tenang di setiap rute",
     whyDescription:
       "Dari pengecekan unit hingga pengantaran ke titik jemput, semuanya kami tangani satu pintu agar kamu tinggal fokus menikmati perjalanan.",
+    carouselAria: "Galeri foto tentang kami",
+    prevSlideAria: "Foto sebelumnya",
+    nextSlideAria: "Foto berikutnya",
   },
   en: {
     pageTitle: "About pesanmobil.com",
@@ -126,54 +150,162 @@ const COPY: Record<Locale, AboutCopy> = {
     whyTitle: "Charting a smoother trip on every route",
     whyDescription:
       "From vehicle prep to on-time delivery at your pick-up point, everything is coordinated in one place so you can travel with peace of mind.",
+    carouselAria: "About us photo gallery",
+    prevSlideAria: "Previous photo",
+    nextSlideAria: "Next photo",
   },
 };
 
 export function AboutSection() {
   const { locale } = useLanguage();
   const copy = COPY[locale];
-  const carouselRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const frameId = requestAnimationFrame(() => {
-      const container = carouselRef.current;
-      const middleCard = container?.children[1] as HTMLElement | undefined;
-      if (!container || !middleCard) return;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const goToOffsetRef = useRef<(delta: number) => void>(() => {});
+  const goToIndexRef = useRef<(index: number) => void>(() => {});
 
-      container.scrollLeft =
-        middleCard.offsetLeft -
-        (container.clientWidth - middleCard.clientWidth) / 2;
-    });
-    return () => cancelAnimationFrame(frameId);
-  }, []);
+  useGSAP(
+    () => {
+      const track = trackRef.current;
+      const slides = slideRefs.current.filter(
+        (el): el is HTMLButtonElement => el !== null
+      );
+      if (!track || slides.length === 0) return;
+
+      const count = slides.length;
+      const state = { offset: 0 };
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      const getStepPx = () => {
+        const cardWidth = slides[0]?.offsetWidth || 680;
+        return cardWidth * 0.94;
+      };
+
+      const render = () => {
+        const stepPx = getStepPx();
+        slides.forEach((slide, index) => {
+          const rel = gsap.utils.wrap(-count / 2, count / 2, index - state.offset);
+          const absRel = Math.abs(rel);
+          const scale = gsap.utils.clamp(0.78, 1, 1 - absRel * 0.16);
+          const opacity =
+            absRel > 1.85 ? 0 : gsap.utils.clamp(0.55, 1, 1 - absRel * 0.28);
+
+          gsap.set(slide, {
+            xPercent: -50,
+            yPercent: -50,
+            x: rel * stepPx,
+            scale,
+            opacity,
+            zIndex: Math.round(10 - absRel * 3),
+          });
+        });
+      };
+
+      const snapTo = (targetOffset: number) => {
+        gsap.to(state, {
+          offset: targetOffset,
+          duration: prefersReducedMotion ? 0 : 0.45,
+          ease: "power3.out",
+          overwrite: true,
+          onUpdate: render,
+        });
+      };
+
+      goToOffsetRef.current = (delta: number) => {
+        snapTo(Math.round(state.offset) + delta);
+      };
+
+      goToIndexRef.current = (targetIndex: number) => {
+        const rounded = Math.round(state.offset);
+        const rel = gsap.utils.wrap(-count / 2, count / 2, targetIndex - rounded);
+        if (rel !== 0) snapTo(rounded + rel);
+      };
+
+      render();
+
+      const observer = Observer.create({
+        target: track,
+        type: "wheel,touch,pointer",
+        lockAxis: true,
+        dragMinimum: 6,
+        onChangeX: (self) => {
+          const stepPx = getStepPx();
+          state.offset -= self.deltaX / stepPx;
+          render();
+        },
+        onRelease: () => {
+          snapTo(Math.round(state.offset));
+        },
+        onStop: () => {
+          snapTo(Math.round(state.offset));
+        },
+      });
+
+      const onResize = () => render();
+      window.addEventListener("resize", onResize);
+
+      return () => {
+        observer.kill();
+        window.removeEventListener("resize", onResize);
+      };
+    },
+    { scope: trackRef }
+  );
 
   return (
     <div className="w-full bg-[var(--bg)] pt-28 pb-16 sm:pt-36 sm:pb-24 font-sans">
       <h1 className="sr-only">{copy.pageTitle}</h1>
 
-      {/* Section 1: Scrollable Peek Banner Carousel & Editorial Intro */}
+      {/* Section 1: Infinite Center-Focused Carousel & Editorial Intro */}
       <section aria-label={copy.introLabel} className="w-full pb-14 sm:pb-20">
         <div
-          ref={carouselRef}
-          className="w-full flex items-center gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          ref={trackRef}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label={copy.carouselAria}
+          className="relative w-full h-[220px] sm:h-[340px] lg:h-[420px] overflow-hidden select-none touch-pan-y cursor-grab active:cursor-grabbing"
         >
           {ABOUT_SLIDES.map((slideId, index) => (
-            <div
+            <button
               key={slideId}
-              className={`shrink-0 snap-center w-[82vw] sm:w-[76vw] max-w-[960px] rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/60 flex items-center justify-center overflow-hidden p-6 ${
-                index === 1
-                  ? "h-[240px] sm:h-[420px]"
-                  : "h-[210px] sm:h-[360px]"
-              }`}
+              ref={(el) => {
+                slideRefs.current[index] = el;
+              }}
+              type="button"
+              onClick={() => goToIndexRef.current(index)}
+              aria-label={`Slide ${index + 1}`}
+              className="absolute left-1/2 top-1/2 w-[78vw] sm:w-[68vw] lg:w-[64vw] max-w-[820px] h-full rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/70 flex items-center justify-center overflow-hidden p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
             >
               <p className="text-[14px] text-[var(--muted-text)] text-center">
                 {copy.placeholderLabel}
               </p>
-            </div>
+            </button>
           ))}
+
+          <button
+            type="button"
+            onClick={() => goToOffsetRef.current(-1)}
+            aria-label={copy.prevSlideAria}
+            className="hidden sm:inline-flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 h-10 w-10 items-center justify-center rounded-full bg-white/95 border border-[var(--border)] text-[var(--fg)] shadow-[0_2px_10px_rgba(29,29,31,0.08)] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+          >
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => goToOffsetRef.current(1)}
+            aria-label={copy.nextSlideAria}
+            className="hidden sm:inline-flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 h-10 w-10 items-center justify-center rounded-full bg-white/95 border border-[var(--border)] text-[var(--fg)] shadow-[0_2px_10px_rgba(29,29,31,0.08)] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+          >
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
+          </button>
         </div>
 
         <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-8">
+
           <div className="mt-8 sm:mt-10">
             <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-[var(--fg-2)]">
               {copy.introEyebrow}
