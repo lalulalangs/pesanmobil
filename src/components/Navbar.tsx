@@ -13,7 +13,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/", label: { id: "Beranda", en: "Home" } },
-  { href: "/mobil", label: { id: "Daftar Unit", en: "Vehicle List" } },
+  { href: "/mobil", label: { id: "Unit Kami", en: "Our Fleet" } },
   { href: "/paket-wisata", label: { id: "Paket Wisata", en: "Tour Packages" } },
   { href: "/tentang-kami", label: { id: "Tentang Kami", en: "About Us" } },
 ];
