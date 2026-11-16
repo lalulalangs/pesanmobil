@@ -173,7 +173,7 @@ export function Footer() {
       <div
         className="relative w-full overflow-hidden"
         style={{
-          aspectRatio: `${footerArtwork.width} / ${footerArtwork.height / 2}`,
+          aspectRatio: `${footerArtwork.width} / ${footerArtwork.height * 0.7}`,
         }}
       >
         <div
