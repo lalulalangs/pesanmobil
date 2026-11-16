@@ -52,7 +52,7 @@ const COLUMNS: FooterColumn[] = [
     title: { id: "Tentang & Legal", en: "About & Legal" },
     links: [
       { label: { id: "Daftar Armada", en: "Car List" }, href: "/mobil" },
-      { label: { id: "Tentang Kami", en: "About Us" }, href: "/tentang" },
+      { label: { id: "Tentang Kami", en: "About Us" }, href: "/tentang-kami" },
       {
         label: { id: "Kebijakan Privasi", en: "Privacy Policy" },
         href: "/kebijakan-privasi",
