@@ -193,6 +193,8 @@ export function AboutSection() {
           const rel = gsap.utils.wrap(-count / 2, count / 2, index - state.offset);
           const absRel = Math.abs(rel);
           const scale = gsap.utils.clamp(0.78, 1, 1 - absRel * 0.16);
+          const y = Math.pow(absRel, 1.8) * 28;
+          const rotation = rel * 4.5;
           const opacity =
             absRel > 1.85 ? 0 : gsap.utils.clamp(0.55, 1, 1 - absRel * 0.28);
 
@@ -200,6 +202,8 @@ export function AboutSection() {
             xPercent: -50,
             yPercent: -50,
             x: rel * stepPx,
+            y,
+            rotation,
             scale,
             opacity,
             zIndex: Math.round(10 - absRel * 3),
@@ -270,7 +274,7 @@ export function AboutSection() {
           role="region"
           aria-roledescription="carousel"
           aria-label={copy.carouselAria}
-          className="relative w-full h-[220px] sm:h-[340px] lg:h-[420px] overflow-hidden select-none touch-pan-y cursor-grab active:cursor-grabbing"
+          className="relative w-full h-[250px] sm:h-[380px] lg:h-[470px] overflow-hidden select-none touch-pan-y cursor-grab active:cursor-grabbing"
         >
           {ABOUT_SLIDES.map((slideId, index) => (
             <button
@@ -281,7 +285,7 @@ export function AboutSection() {
               type="button"
               onClick={() => goToIndexRef.current(index)}
               aria-label={`Slide ${index + 1}`}
-              className="absolute left-1/2 top-1/2 w-[78vw] sm:w-[68vw] lg:w-[64vw] max-w-[820px] h-full rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/70 flex items-center justify-center overflow-hidden p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+              className="absolute left-1/2 top-[46%] w-[78vw] sm:w-[68vw] lg:w-[64vw] max-w-[820px] h-[200px] sm:h-[320px] lg:h-[400px] rounded-2xl bg-[#f4f4f5] border border-[var(--border)]/70 flex items-center justify-center overflow-hidden p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
             >
               <p className="text-[14px] text-[var(--muted-text)] text-center">
                 {copy.placeholderLabel}
