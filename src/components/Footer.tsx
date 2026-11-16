@@ -154,14 +154,14 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-[var(--muted-text)]">
-          <p>Copyright pesanmobil.com 2026</p>
+          <p>© 2026 by Talikama</p>
           <p className="inline-flex items-center gap-1.5">
             <span>Made with</span>
             <Heart
               className="w-3.5 h-3.5 text-red-500 fill-red-500 shrink-0"
               aria-label="love"
             />
-            <span>in Lombok, Indonesia</span>
+            <span>in Lombok.</span>
           </p>
         </div>
       </div>
