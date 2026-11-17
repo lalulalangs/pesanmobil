@@ -109,7 +109,7 @@ export function MediaGallerySection() {
                   )
                 }
                 aria-label={copy.playVideoLabel(title)}
-                className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--cta)] text-[var(--cta-on)] shadow-[0_2px_8px_rgba(234,88,12,0.28)] transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
+                className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-[#fb923c] to-[#ea580c] hover:from-[#f97316] hover:to-[#dc5309] border border-[#ea580c] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] text-[#1d1d1f] transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
               >
                 <Play
                   className="w-5 h-5 fill-current ml-0.5"
