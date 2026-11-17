@@ -7,13 +7,11 @@ import {
   Bike,
   Briefcase,
   Car,
-  Clock,
   Gauge,
   Settings2,
   Users,
 } from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
-import { TOUR_PACKAGES } from "@/components/TourPackagesSection";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -223,16 +221,16 @@ interface FleetCopy {
   vehicleTypes: Record<VehicleType, string>;
   startFrom: string;
   perDay: string;
-  perPackage: string;
   withDriverNote: string;
   seeMore: string;
   placeholderLabel: string;
   seatsLabel: (count: number) => string;
   luggageLabel: (count: number) => string;
   helmetsLabel: (count: number) => string;
-  maxPassengers: (count: number) => string;
   customTripTitle: string;
-  customTripSubtitle: string;
+  tourDescBefore: string;
+  tourDescLink: string;
+  tourDescAfter: string;
   customTripCta: string;
   customTripWhatsappText: string;
   transmissionLabels: Record<TransmissionType, string>;
@@ -257,18 +255,18 @@ const COPY: Record<Locale, FleetCopy> = {
     },
     startFrom: "Mulai dari",
     perDay: "/ hari",
-    perPackage: "/ paket",
     withDriverNote: "Termasuk supir",
     seeMore: "Lihat Semua",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} kursi`,
     luggageLabel: (count) => `${count} bagasi`,
     helmetsLabel: (count) => `${count} helm`,
-    maxPassengers: (count) => `Maks. ${count} orang`,
-    customTripTitle: "Mau bikin rute custom trip sendiri?",
-    customTripSubtitle:
-      "Atur destinasi dan jam perjalanan sesuai keinginanmu bareng tim kami lewat WhatsApp.",
-    customTripCta: "Diskusi Custom Trip",
+    customTripTitle: "Lagi cari paket wisata atau mau atur rute sendiri?",
+    tourDescBefore: "Kita punya ",
+    tourDescLink: "pilihan paket wisata yang sudah tersedia",
+    tourDescAfter:
+      ", tapi kamu juga bisa custom trip sendiri kok. Yuk diskusiin bareng lewat chat kami!",
+    customTripCta: "Chat Custom Trip",
     customTripWhatsappText:
       "Halo pesanmobil.com, saya mau diskusi untuk buat custom trip wisata.",
     transmissionLabels: {
@@ -295,18 +293,18 @@ const COPY: Record<Locale, FleetCopy> = {
     },
     startFrom: "Start from",
     perDay: "/ day",
-    perPackage: "/ package",
     withDriverNote: "With driver",
     seeMore: "See More",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} seats`,
     luggageLabel: (count) => `${count} luggage`,
     helmetsLabel: (count) => `${count} helmets`,
-    maxPassengers: (count) => `Max ${count} pax`,
-    customTripTitle: "Want to plan your own custom trip?",
-    customTripSubtitle:
-      "Customize your destinations and schedule directly with our team on WhatsApp.",
-    customTripCta: "Plan Custom Trip",
+    customTripTitle: "Looking for a tour package or planning your own route?",
+    tourDescBefore: "We already have ",
+    tourDescLink: "ready-made tour packages you can browse",
+    tourDescAfter:
+      ", or you can customize your own trip freely. Let's chat and plan it together!",
+    customTripCta: "Chat Custom Trip",
     customTripWhatsappText:
       "Hello pesanmobil.com, I would like to discuss creating a custom tour trip.",
     transmissionLabels: {
@@ -361,7 +359,6 @@ export function FleetSection({
     return true;
   });
 
-  const tourItems = TOUR_PACKAGES.slice(0, 3);
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
   const customTripHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -453,93 +450,38 @@ export function FleetSection({
         </Tabs>
 
         {serviceTab === "paket-wisata" ? (
-          <>
-            <div
-              ref={carouselRef}
-              className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-pl-5 -mx-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-x-6 sm:gap-y-8 sm:overflow-visible"
-            >
-              {tourItems.map((pkg) => (
-                <article
-                  key={pkg.id}
-                  className="flex flex-col w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+          <div className="rounded-2xl border border-[var(--border)]/80 bg-[var(--surface)] p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="max-w-[62ch]">
+              <h3 className="text-[20px] sm:text-[22px] font-semibold tracking-tight text-[var(--fg)] leading-snug">
+                {copy.customTripTitle}
+              </h3>
+              <p className="mt-2.5 text-[15px] sm:text-[16px] text-[var(--muted-text)] leading-relaxed">
+                {copy.tourDescBefore}
+                <Link
+                  href="/paket-wisata"
+                  className="font-medium text-[var(--brand-link)] underline underline-offset-4 hover:text-[var(--brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] rounded-xs"
                 >
-                  <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] p-4 flex items-center justify-center overflow-hidden">
-                    <span className="absolute top-3.5 left-3.5 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
-                      {pkg.category}
-                    </span>
-                    <div className="px-4 text-center">
-                      <p className="text-[13px] text-[var(--muted-text)]">
-                        {copy.placeholderLabel}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3.5 flex flex-col gap-1.5">
-                    <h3 className="text-[17px] font-semibold text-[var(--fg)] leading-snug">
-                      {pkg.name[locale]}
-                    </h3>
-
-                    <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
-                      <Clock
-                        className="w-3.5 h-3.5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <span>{pkg.duration[locale]}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[13px] text-[var(--muted-text)]">
-                      <span className="inline-flex items-center gap-1.5">
-                        <Users
-                          className="w-3.5 h-3.5 shrink-0"
-                          aria-hidden="true"
-                        />
-                        <span>{copy.maxPassengers(pkg.seats)}</span>
-                      </span>
-                      <span>· {pkg.unitInfo}</span>
-                    </div>
-
-                    <div className="mt-1.5">
-                      <p className="text-[12px] text-[var(--muted-text)]">
-                        {copy.startFrom}
-                      </p>
-                      <p className="mt-0.5 text-[18px] font-semibold text-[var(--fg)] leading-tight">
-                        {pkg.priceIdr}{" "}
-                        <span className="text-[13px] font-normal text-[var(--muted-text)]">
-                          {copy.perPackage}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              ))}
+                  {copy.tourDescLink}
+                </Link>
+                {copy.tourDescAfter}
+              </p>
             </div>
-
-            <div className="mt-8 rounded-2xl border border-[var(--border)]/80 bg-[var(--surface)] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h3 className="text-[17px] font-semibold text-[var(--fg)]">
-                  {copy.customTripTitle}
-                </h3>
-                <p className="mt-1 text-[14px] text-[var(--muted-text)] max-w-[54ch]">
-                  {copy.customTripSubtitle}
-                </p>
-              </div>
-              <Button
-                variant="cta"
-                nativeButton={false}
-                render={
-                  <a
-                    href={customTripHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }
-                className="h-10 w-full sm:w-auto gap-2 px-6 text-[14px] shrink-0"
-              >
-                <span>{copy.customTripCta}</span>
-                <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-              </Button>
-            </div>
-          </>
+            <Button
+              variant="cta"
+              nativeButton={false}
+              render={
+                <a
+                  href={customTripHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+              className="h-11 w-full md:w-auto gap-2 px-6 text-[14px] shrink-0"
+            >
+              <span>{copy.customTripCta}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
+            </Button>
+          </div>
         ) : (
           <div
             ref={carouselRef}
