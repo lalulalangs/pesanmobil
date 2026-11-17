@@ -15,7 +15,7 @@ interface TourPackage {
   priceIdr: string;
 }
 
-const TOUR_PACKAGES: TourPackage[] = [
+export const TOUR_PACKAGES: TourPackage[] = [
   {
     id: "tour-city",
     name: { id: "Paket City Tour", en: "City Tour Package" },

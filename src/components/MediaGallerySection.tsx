@@ -135,7 +135,7 @@ export function MediaGallerySection() {
           </div>
         )}
 
-        <span className="pointer-events-none absolute bottom-3.5 left-3.5 rounded-full bg-[var(--fg)] px-3 py-1 text-[12px] font-medium text-white">
+        <span className="pointer-events-none absolute bottom-3.5 left-3.5 rounded-full bg-gradient-to-b from-[#34373c] to-[#18191c] border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_2px_8px_rgba(0,0,0,0.22)] px-3.5 py-1 text-[12px] font-medium text-white">
           {title}
         </span>
       </article>

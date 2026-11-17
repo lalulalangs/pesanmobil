@@ -7,21 +7,23 @@ import {
   Bike,
   Briefcase,
   Car,
+  Clock,
   Gauge,
   Settings2,
   Users,
 } from "lucide-react";
 import { useLanguage, type Locale } from "@/components/LanguageProvider";
+import { TOUR_PACKAGES } from "@/components/TourPackagesSection";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type ServiceTab = "lepas-kunci" | "private";
+type ServiceTab = "lepas-kunci" | "private" | "paket-wisata";
 type VehicleType = "mobil" | "motor";
 type TransmissionType = "auto-manual" | "automatic" | "manual";
 
 interface FleetItem {
   id: string;
-  service: ServiceTab;
+  service: Exclude<ServiceTab, "paket-wisata">;
   vehicleType?: VehicleType;
   name: string;
   category: string;
@@ -221,12 +223,18 @@ interface FleetCopy {
   vehicleTypes: Record<VehicleType, string>;
   startFrom: string;
   perDay: string;
+  perPackage: string;
   withDriverNote: string;
   seeMore: string;
   placeholderLabel: string;
   seatsLabel: (count: number) => string;
   luggageLabel: (count: number) => string;
   helmetsLabel: (count: number) => string;
+  maxPassengers: (count: number) => string;
+  customTripTitle: string;
+  customTripSubtitle: string;
+  customTripCta: string;
+  customTripWhatsappText: string;
   transmissionLabels: Record<TransmissionType, string>;
 }
 
@@ -241,6 +249,7 @@ const COPY: Record<Locale, FleetCopy> = {
     tabs: {
       "lepas-kunci": "Lepas Kunci",
       private: "Private",
+      "paket-wisata": "Paket Wisata",
     },
     vehicleTypes: {
       mobil: "Mobil",
@@ -248,12 +257,20 @@ const COPY: Record<Locale, FleetCopy> = {
     },
     startFrom: "Mulai dari",
     perDay: "/ hari",
+    perPackage: "/ paket",
     withDriverNote: "Termasuk supir",
     seeMore: "Lihat Semua",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} kursi`,
     luggageLabel: (count) => `${count} bagasi`,
     helmetsLabel: (count) => `${count} helm`,
+    maxPassengers: (count) => `Maks. ${count} orang`,
+    customTripTitle: "Mau bikin rute custom trip sendiri?",
+    customTripSubtitle:
+      "Atur destinasi dan jam perjalanan sesuai keinginanmu bareng tim kami lewat WhatsApp.",
+    customTripCta: "Diskusi Custom Trip",
+    customTripWhatsappText:
+      "Halo pesanmobil.com, saya mau diskusi untuk buat custom trip wisata.",
     transmissionLabels: {
       "auto-manual": "Matic/Manual",
       automatic: "Matic",
@@ -270,6 +287,7 @@ const COPY: Record<Locale, FleetCopy> = {
     tabs: {
       "lepas-kunci": "Self-Drive",
       private: "Private Driver",
+      "paket-wisata": "Tour Package",
     },
     vehicleTypes: {
       mobil: "Car",
@@ -277,12 +295,20 @@ const COPY: Record<Locale, FleetCopy> = {
     },
     startFrom: "Start from",
     perDay: "/ day",
+    perPackage: "/ package",
     withDriverNote: "With driver",
     seeMore: "See More",
     placeholderLabel: "Lorem ipsum dolor sit amet",
     seatsLabel: (count) => `${count} seats`,
     luggageLabel: (count) => `${count} luggage`,
     helmetsLabel: (count) => `${count} helmets`,
+    maxPassengers: (count) => `Max ${count} pax`,
+    customTripTitle: "Want to plan your own custom trip?",
+    customTripSubtitle:
+      "Customize your destinations and schedule directly with our team on WhatsApp.",
+    customTripCta: "Plan Custom Trip",
+    customTripWhatsappText:
+      "Hello pesanmobil.com, I would like to discuss creating a custom tour trip.",
     transmissionLabels: {
       "auto-manual": "Automatic/Manual",
       automatic: "Automatic",
@@ -312,7 +338,11 @@ export function FleetSection({
   };
 
   const handleTabChange = (nextValue: string | null) => {
-    if (nextValue === "lepas-kunci" || nextValue === "private") {
+    if (
+      nextValue === "lepas-kunci" ||
+      nextValue === "private" ||
+      nextValue === "paket-wisata"
+    ) {
       setServiceTab(nextValue);
       resetCarouselScroll();
     }
@@ -330,6 +360,13 @@ export function FleetSection({
     }
     return true;
   });
+
+  const tourItems = TOUR_PACKAGES.slice(0, 3);
+  const whatsappNumber =
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+  const customTripHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+    copy.customTripWhatsappText
+  )}`;
 
   const seeMoreHref =
     serviceTab === "lepas-kunci"
@@ -360,9 +397,10 @@ export function FleetSection({
           <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:min-h-[44px]">
             <TabsList
               aria-label={copy.tabsAria}
-              className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex rounded-full bg-[#f4f4f5] p-1 h-10 sm:h-11 group-data-horizontal/tabs:h-10 sm:group-data-horizontal/tabs:h-11"
+              className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex rounded-full bg-[#f4f4f5] p-1 h-10 sm:h-11 group-data-horizontal/tabs:h-10 sm:group-data-horizontal/tabs:h-11"
             >
-              {(["lepas-kunci", "private"] as ServiceTab[]).map((tabKey) => (
+              {(["lepas-kunci", "private", "paket-wisata"] as ServiceTab[]).map(
+                (tabKey) => (
                   <TabsTrigger
                     key={tabKey}
                     value={tabKey}
@@ -414,123 +452,213 @@ export function FleetSection({
           </div>
         </Tabs>
 
-        <div
-          ref={carouselRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-pl-5 -mx-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-8 sm:overflow-visible"
-        >
-          {filteredItems.map((vehicle) => (
-            <article
-              key={vehicle.id}
-              className="flex flex-col w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+        {serviceTab === "paket-wisata" ? (
+          <>
+            <div
+              ref={carouselRef}
+              className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-pl-5 -mx-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-x-6 sm:gap-y-8 sm:overflow-visible"
             >
-              {/* Image placeholder box */}
-              <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] p-4 flex items-center justify-center overflow-hidden">
-                <span className="absolute top-3.5 left-3.5 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
-                  {vehicle.category}
-                </span>
-                <div className="px-4 text-center">
-                  <p className="text-[13px] text-[var(--muted-text)]">
-                    {copy.placeholderLabel}
-                  </p>
-                </div>
-              </div>
-
-              {/* Vehicle details */}
-              <div className="mt-3.5 flex flex-col gap-1.5">
-                <h3 className="text-[17px] font-semibold text-[var(--fg)] leading-snug">
-                  {vehicle.name}
-                </h3>
-
-                {vehicle.vehicleType === "motor" ? (
-                  <>
-                    <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
-                      <Settings2
-                        className="w-3.5 h-3.5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <span>
-                        {vehicle.transmission
-                          ? copy.transmissionLabels[vehicle.transmission]
-                          : ""}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-[13px] text-[var(--muted-text)]">
-                      {vehicle.engineCc && (
-                        <span className="inline-flex items-center gap-1.5">
-                          <Gauge
-                            className="w-3.5 h-3.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span>{vehicle.engineCc}</span>
-                        </span>
-                      )}
-                      {vehicle.helmets && (
-                        <span>· {copy.helmetsLabel(vehicle.helmets)}</span>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
-                      <Settings2
-                        className="w-3.5 h-3.5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <span>
-                        {vehicle.transmission
-                          ? copy.transmissionLabels[vehicle.transmission]
-                          : ""}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3.5 text-[13px] text-[var(--muted-text)]">
-                      {vehicle.seats && (
-                        <span
-                          className="inline-flex items-center gap-1.5"
-                          aria-label={copy.seatsLabel(vehicle.seats)}
-                        >
-                          <Users
-                            className="w-3.5 h-3.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span>{vehicle.seats}</span>
-                        </span>
-                      )}
-                      {vehicle.luggage && (
-                        <span
-                          className="inline-flex items-center gap-1.5"
-                          aria-label={copy.luggageLabel(vehicle.luggage)}
-                        >
-                          <Briefcase
-                            className="w-3.5 h-3.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span>{vehicle.luggage}</span>
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                <div className="mt-1.5">
-                  <p className="text-[12px] text-[var(--muted-text)]">
-                    {copy.startFrom}
-                    {vehicle.service === "private"
-                      ? ` · ${copy.withDriverNote}`
-                      : ""}
-                  </p>
-                  <p className="mt-0.5 text-[18px] font-semibold text-[var(--fg)] leading-tight">
-                    {vehicle.priceIdr}{" "}
-                    <span className="text-[13px] font-normal text-[var(--muted-text)]">
-                      {copy.perDay}
+              {tourItems.map((pkg) => (
+                <article
+                  key={pkg.id}
+                  className="flex flex-col w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+                >
+                  <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] p-4 flex items-center justify-center overflow-hidden">
+                    <span className="absolute top-3.5 left-3.5 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
+                      {pkg.category}
                     </span>
-                  </p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+                    <div className="px-4 text-center">
+                      <p className="text-[13px] text-[var(--muted-text)]">
+                        {copy.placeholderLabel}
+                      </p>
+                    </div>
+                  </div>
 
-        {showSeeMore && filteredItems.length > 6 && (
+                  <div className="mt-3.5 flex flex-col gap-1.5">
+                    <h3 className="text-[17px] font-semibold text-[var(--fg)] leading-snug">
+                      {pkg.name[locale]}
+                    </h3>
+
+                    <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
+                      <Clock
+                        className="w-3.5 h-3.5 shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span>{pkg.duration[locale]}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[13px] text-[var(--muted-text)]">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Users
+                          className="w-3.5 h-3.5 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span>{copy.maxPassengers(pkg.seats)}</span>
+                      </span>
+                      <span>· {pkg.unitInfo}</span>
+                    </div>
+
+                    <div className="mt-1.5">
+                      <p className="text-[12px] text-[var(--muted-text)]">
+                        {copy.startFrom}
+                      </p>
+                      <p className="mt-0.5 text-[18px] font-semibold text-[var(--fg)] leading-tight">
+                        {pkg.priceIdr}{" "}
+                        <span className="text-[13px] font-normal text-[var(--muted-text)]">
+                          {copy.perPackage}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-[var(--border)]/80 bg-[var(--surface)] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 className="text-[17px] font-semibold text-[var(--fg)]">
+                  {copy.customTripTitle}
+                </h3>
+                <p className="mt-1 text-[14px] text-[var(--muted-text)] max-w-[54ch]">
+                  {copy.customTripSubtitle}
+                </p>
+              </div>
+              <Button
+                variant="cta"
+                nativeButton={false}
+                render={
+                  <a
+                    href={customTripHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                className="h-10 w-full sm:w-auto gap-2 px-6 text-[14px] shrink-0"
+              >
+                <span>{copy.customTripCta}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div
+            ref={carouselRef}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-pl-5 -mx-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-8 sm:overflow-visible"
+          >
+            {filteredItems.map((vehicle) => (
+              <article
+                key={vehicle.id}
+                className="flex flex-col w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+              >
+                {/* Image placeholder box */}
+                <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] p-4 flex items-center justify-center overflow-hidden">
+                  <span className="absolute top-3.5 left-3.5 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
+                    {vehicle.category}
+                  </span>
+                  <div className="px-4 text-center">
+                    <p className="text-[13px] text-[var(--muted-text)]">
+                      {copy.placeholderLabel}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Vehicle details */}
+                <div className="mt-3.5 flex flex-col gap-1.5">
+                  <h3 className="text-[17px] font-semibold text-[var(--fg)] leading-snug">
+                    {vehicle.name}
+                  </h3>
+
+                  {vehicle.vehicleType === "motor" ? (
+                    <>
+                      <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
+                        <Settings2
+                          className="w-3.5 h-3.5 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span>
+                          {vehicle.transmission
+                            ? copy.transmissionLabels[vehicle.transmission]
+                            : ""}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[13px] text-[var(--muted-text)]">
+                        {vehicle.engineCc && (
+                          <span className="inline-flex items-center gap-1.5">
+                            <Gauge
+                              className="w-3.5 h-3.5 shrink-0"
+                              aria-hidden="true"
+                            />
+                            <span>{vehicle.engineCc}</span>
+                          </span>
+                        )}
+                        {vehicle.helmets && (
+                          <span>· {copy.helmetsLabel(vehicle.helmets)}</span>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-1.5 text-[13px] text-[var(--muted-text)]">
+                        <Settings2
+                          className="w-3.5 h-3.5 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span>
+                          {vehicle.transmission
+                            ? copy.transmissionLabels[vehicle.transmission]
+                            : ""}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3.5 text-[13px] text-[var(--muted-text)]">
+                        {vehicle.seats && (
+                          <span
+                            className="inline-flex items-center gap-1.5"
+                            aria-label={copy.seatsLabel(vehicle.seats)}
+                          >
+                            <Users
+                              className="w-3.5 h-3.5 shrink-0"
+                              aria-hidden="true"
+                            />
+                            <span>{vehicle.seats}</span>
+                          </span>
+                        )}
+                        {vehicle.luggage && (
+                          <span
+                            className="inline-flex items-center gap-1.5"
+                            aria-label={copy.luggageLabel(vehicle.luggage)}
+                          >
+                            <Briefcase
+                              className="w-3.5 h-3.5 shrink-0"
+                              aria-hidden="true"
+                            />
+                            <span>{vehicle.luggage}</span>
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  <div className="mt-1.5">
+                    <p className="text-[12px] text-[var(--muted-text)]">
+                      {copy.startFrom}
+                      {vehicle.service === "private"
+                        ? ` · ${copy.withDriverNote}`
+                        : ""}
+                    </p>
+                    <p className="mt-0.5 text-[18px] font-semibold text-[var(--fg)] leading-tight">
+                      {vehicle.priceIdr}{" "}
+                      <span className="text-[13px] font-normal text-[var(--muted-text)]">
+                        {copy.perDay}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {showSeeMore && serviceTab !== "paket-wisata" && filteredItems.length > 6 && (
           <div className="mt-10 sm:mt-12 flex justify-center">
             <Button
               variant="default"

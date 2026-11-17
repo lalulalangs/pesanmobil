@@ -19,6 +19,9 @@ gsap.registerPlugin(useGSAP, Observer);
 const HERO_PILL_CLASS =
   "inline-flex items-center rounded-full bg-gradient-to-b from-[#fb923c] to-[#ea580c] border border-[#ea580c] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(234,88,12,0.25)] px-4 py-1.5 text-[13px] font-button font-medium text-[#1d1d1f]";
 
+const ARROW_BTN_CLASS =
+  "items-center justify-center rounded-full border border-[#009cde] bg-gradient-to-b from-[#38bdf8] to-[#009cde] hover:from-[#1eb3f0] hover:to-[#008bc7] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_rgba(0,156,222,0.25)] focus-visible:outline-none focus-visible:ring-0";
+
 const ABOUT_SLIDES = [
   "about-slide-1",
   "about-slide-2",
@@ -350,7 +353,7 @@ export function AboutSection() {
             type="button"
             onClick={() => goToOffsetRef.current(-1)}
             aria-label={copy.prevSlideAria}
-            className="hidden sm:inline-flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 h-10 w-10 items-center justify-center rounded-full bg-white/95 border border-[var(--border)] text-[var(--fg)] shadow-[0_2px_10px_rgba(29,29,31,0.08)] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+            className={`hidden sm:inline-flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 h-10 w-10 ${ARROW_BTN_CLASS}`}
           >
             <ChevronLeft className="w-5 h-5" aria-hidden="true" />
           </button>
@@ -359,7 +362,7 @@ export function AboutSection() {
             type="button"
             onClick={() => goToOffsetRef.current(1)}
             aria-label={copy.nextSlideAria}
-            className="hidden sm:inline-flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 h-10 w-10 items-center justify-center rounded-full bg-white/95 border border-[var(--border)] text-[var(--fg)] shadow-[0_2px_10px_rgba(29,29,31,0.08)] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+            className={`hidden sm:inline-flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 h-10 w-10 ${ARROW_BTN_CLASS}`}
           >
             <ChevronRight className="w-5 h-5" aria-hidden="true" />
           </button>
@@ -503,7 +506,7 @@ export function AboutSection() {
                     }
                     disabled={activeHighlight === 0}
                     aria-label={copy.prevSlideAria}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--fg)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                    className={`inline-flex h-8 w-8 disabled:opacity-40 ${ARROW_BTN_CLASS}`}
                   >
                     <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                   </button>
@@ -516,7 +519,7 @@ export function AboutSection() {
                     }
                     disabled={activeHighlight === HIGHLIGHT_CARDS.length - 1}
                     aria-label={copy.nextSlideAria}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--fg)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                    className={`inline-flex h-8 w-8 disabled:opacity-40 ${ARROW_BTN_CLASS}`}
                   >
                     <ChevronRight className="w-4 h-4" aria-hidden="true" />
                   </button>
