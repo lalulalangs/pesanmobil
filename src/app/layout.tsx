@@ -28,17 +28,19 @@ export const metadata: Metadata = {
     apple: tabIcon.src,
   },
   description:
-    "Pesan rental mobil mudah, cepat, dan terpercaya. Pilihan sewa mobil harian, mingguan, bulanan lepas kunci atau dengan supir profesional. Armada bersih, prima, dan siap jalan.",
+    "Pesan rental mobil dan motor mudah, cepat, dan terpercaya. Berbasis di Bali dan melayani seluruh Indonesia untuk sewa harian, mingguan, bulanan lepas kunci atau dengan pengemudi.",
   keywords: [
     "pesan mobil",
     "rental mobil",
     "sewa mobil",
+    "rental mobil bali",
+    "sewa mobil bali",
     "rental mobil lepas kunci",
     "sewa mobil dengan supir",
     "rental avanza",
     "rental innova zenix",
     "rental hiace",
-    "rental mobil indonesia",
+    "rental mobil seluruh indonesia",
   ],
 };
 

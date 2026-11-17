@@ -21,14 +21,11 @@ const COLUMNS: FooterColumn[] = [
   {
     title: { id: "Area Layanan", en: "Service Areas" },
     links: [
-      { label: { id: "Mataram", en: "Mataram" }, href: "/#booking" },
-      {
-        label: { id: "Kuta Mandalika", en: "Kuta Mandalika" },
-        href: "/#booking",
-      },
-      { label: { id: "Senggigi", en: "Senggigi" }, href: "/#booking" },
-      { label: { id: "Bandara Lombok", en: "Lombok Airport" }, href: "/#booking" },
-      { label: { id: "Pelabuhan Bangsal", en: "Bangsal Harbor" }, href: "/#booking" },
+      { label: { id: "Bali (Home Base)", en: "Bali (Home Base)" }, href: "/#booking" },
+      { label: { id: "Jakarta", en: "Jakarta" }, href: "/#booking" },
+      { label: { id: "Yogyakarta", en: "Yogyakarta" }, href: "/#booking" },
+      { label: { id: "Surabaya", en: "Surabaya" }, href: "/#booking" },
+      { label: { id: "Seluruh Indonesia", en: "All Over Indonesia" }, href: "/#booking" },
     ],
   },
   {
@@ -161,7 +158,7 @@ export function Footer() {
               className="w-3.5 h-3.5 text-red-500 fill-red-500 shrink-0"
               aria-label="love"
             />
-            <span>in Lombok.</span>
+            <span>in Bali, Indonesia.</span>
           </p>
         </div>
       </div>

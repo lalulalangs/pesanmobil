@@ -62,7 +62,7 @@ const COPY: Record<Locale, BookingCopy> = {
     subheadline:
       "Tentukan lokasi jemput dan durasi sewa. Setelah klik booking, tim kami langsung bantu cek jadwal unitnya via WhatsApp.",
     pickupLocationLabel: "Lokasi Penjemputan",
-    pickupLocationPlaceholder: "Kota, bandara, hotel, atau alamat",
+    pickupLocationPlaceholder: "Misal: Bali, Jakarta, bandara, atau hotel",
     pickupDateLabel: "Tanggal & Jam Ambil",
     pickupTimeAria: "Jam ambil kendaraan",
     returnDateLabel: "Tanggal & Jam Kembali",
@@ -93,7 +93,7 @@ const COPY: Record<Locale, BookingCopy> = {
     subheadline:
       "Choose your pick-up location and rental duration. Once you click booking, our team will check unit availability right away on WhatsApp.",
     pickupLocationLabel: "Pick Up Location",
-    pickupLocationPlaceholder: "City, airport, hotel, or address",
+    pickupLocationPlaceholder: "e.g. Bali, Jakarta, airport, or hotel",
     pickupDateLabel: "Pick Up Date & Time",
     pickupTimeAria: "Pick up time",
     returnDateLabel: "Return Date & Time",

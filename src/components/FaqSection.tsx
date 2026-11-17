@@ -46,8 +46,8 @@ const FAQ_ITEMS: FaqItemData[] = [
       en: "Can the vehicle be delivered to the airport, station, or hotel?",
     },
     answer: {
-      id: "Bisa banget! Tulis saja titik jemput yang kamu mau di form pemesanan, lalu tim kami akan atur jadwal pengantaran dan penjemputan unit sesuai jam kedatanganmu.",
-      en: "Yes! Just enter your preferred pick-up point in the booking form, and our team will arrange delivery and pick-up right on schedule.",
+      id: "Bisa banget! Berbasis di Bali dan melayani berbagai kota di seluruh Indonesia, kamu tinggal tulis titik jemput di form pemesanan lalu tim kami bantu atur pengantaran sesuai jadwalmu.",
+      en: "Yes! Based in Bali and serving cities across Indonesia, simply enter your pick-up point in the booking form and our team will arrange delivery on schedule.",
     },
   },
   {
