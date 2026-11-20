@@ -21,7 +21,7 @@ const switzer = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "pesanmobil.com: Sewa Mobil Lepas Kunci dan dengan Pengemudi",
+  title: "Rental Mobil Lepas Kunci & Pengemudi | pesanmobil.com",
   icons: {
     icon: tabIcon.src,
     shortcut: tabIcon.src,
