@@ -1,7 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import alphardImg from "../../assets/armada/alphard.webp";
+import beatImg from "../../assets/armada/beat.webp";
+import camryImg from "../../assets/armada/camry.webp";
+import fortunerImg from "../../assets/armada/fortuner.webp";
+import lexusImg from "../../assets/armada/lexus.webp";
+import nmaxImg from "../../assets/armada/nmax.webp";
+import rebornImg from "../../assets/armada/reborn.webp";
+import teriosImg from "../../assets/armada/terios.webp";
+import varioImg from "../../assets/armada/vario.webp";
+import vespaImg from "../../assets/armada/vespa.webp";
+import yarisImg from "../../assets/armada/yaris.webp";
+import zenixImg from "../../assets/armada/zenix.webp";
 import {
   ArrowRight,
   Bike,
@@ -31,6 +44,7 @@ interface FleetItem {
   engineCc?: string;
   helmets?: number;
   priceIdr: string;
+  image?: StaticImageData;
 }
 
 export const FLEET_ITEMS: FleetItem[] = [
@@ -45,6 +59,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 5,
     luggage: 2,
     priceIdr: "Rp 450.000",
+    image: yarisImg,
   },
   {
     id: "alphard",
@@ -56,6 +71,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 4,
     priceIdr: "Rp 1.850.000",
+    image: alphardImg,
   },
   {
     id: "lexus-nx-300",
@@ -67,6 +83,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 5,
     luggage: 3,
     priceIdr: "Rp 1.650.000",
+    image: lexusImg,
   },
   {
     id: "camry",
@@ -78,6 +95,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 5,
     luggage: 3,
     priceIdr: "Rp 1.250.000",
+    image: camryImg,
   },
   {
     id: "innova",
@@ -89,6 +107,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 3,
     priceIdr: "Rp 550.000",
+    image: rebornImg,
   },
   {
     id: "toyota-fortuner",
@@ -100,6 +119,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 3,
     priceIdr: "Rp 1.150.000",
+    image: fortunerImg,
   },
   {
     id: "innova-zenix",
@@ -111,6 +131,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 3,
     priceIdr: "Rp 750.000",
+    image: zenixImg,
   },
   {
     id: "terios",
@@ -122,6 +143,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 2,
     priceIdr: "Rp 450.000",
+    image: teriosImg,
   },
   // Lepas Kunci - Motor
   {
@@ -134,6 +156,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     engineCc: "110cc",
     helmets: 2,
     priceIdr: "Rp 90.000",
+    image: beatImg,
   },
   {
     id: "honda-vario-160",
@@ -145,6 +168,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     engineCc: "160cc",
     helmets: 2,
     priceIdr: "Rp 125.000",
+    image: varioImg,
   },
   {
     id: "yamaha-nmax",
@@ -156,6 +180,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     engineCc: "155cc",
     helmets: 2,
     priceIdr: "Rp 150.000",
+    image: nmaxImg,
   },
   {
     id: "vespa-primavera",
@@ -167,6 +192,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     engineCc: "150cc",
     helmets: 2,
     priceIdr: "Rp 250.000",
+    image: vespaImg,
   },
   // Private (dengan supir)
   {
@@ -188,6 +214,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 3,
     priceIdr: "Rp 850.000",
+    image: rebornImg,
   },
   {
     id: "private-zenix",
@@ -198,6 +225,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 3,
     priceIdr: "Rp 1.050.000",
+    image: zenixImg,
   },
   {
     id: "private-alphard",
@@ -208,6 +236,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 4,
     priceIdr: "Rp 2.250.000",
+    image: alphardImg,
   },
 ];
 
@@ -492,16 +521,26 @@ export function FleetSection({
                 key={vehicle.id}
                 className="flex flex-col w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
               >
-                {/* Image placeholder box */}
-                <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] p-4 flex items-center justify-center overflow-hidden">
-                  <span className="absolute top-3.5 left-3.5 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
+                {/* Vehicle image box */}
+                <div className="relative h-[196px] w-full rounded-2xl bg-[#f4f4f5] flex items-center justify-center overflow-hidden">
+                  <span className="absolute top-3.5 left-3.5 z-10 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-[var(--fg)] shadow-[0_1px_2px_rgba(29,29,31,0.06)]">
                     {vehicle.category}
                   </span>
-                  <div className="px-4 text-center">
-                    <p className="text-[13px] text-[var(--muted-text)]">
-                      {copy.placeholderLabel}
-                    </p>
-                  </div>
+                  {vehicle.image ? (
+                    <Image
+                      src={vehicle.image}
+                      alt={vehicle.name}
+                      fill
+                      sizes="(max-width: 639px) 280px, (max-width: 1023px) 340px, 266px"
+                      className="object-cover object-center"
+                    />
+                  ) : (
+                    <div className="px-4 text-center">
+                      <p className="text-[13px] text-[var(--muted-text)]">
+                        {copy.placeholderLabel}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Vehicle details */}
