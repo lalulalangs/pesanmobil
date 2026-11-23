@@ -389,7 +389,7 @@ export function FleetSection({
   });
 
   const whatsappNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "6285177623290";
   const customTripHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     copy.customTripWhatsappText
   )}`;

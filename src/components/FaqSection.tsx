@@ -108,7 +108,7 @@ export function FaqSection() {
   const copy = COPY[locale];
 
   const whatsappNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "6285177623290";
   const ctaHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     copy.whatsappText
   )}`;

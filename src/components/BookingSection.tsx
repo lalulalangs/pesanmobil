@@ -231,7 +231,7 @@ export function BookingSection() {
     if (isSubmitDisabled) return;
 
     const whatsappNumber =
-      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "6285177623290";
 
     const locationText =
       pickupLocation.trim() || copy.missingLocationFallback;

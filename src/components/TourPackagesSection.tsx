@@ -110,7 +110,7 @@ export function TourPackagesSection() {
   const { locale } = useLanguage();
   const copy = COPY[locale];
   const whatsappNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "6285177623290";
 
   const getWhatsappHref = (pkg: TourPackage) => {
     const title = pkg.name[locale];

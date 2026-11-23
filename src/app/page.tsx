@@ -5,7 +5,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { MediaGallerySection } from "@/components/MediaGallerySection";
 
 const whatsappNumber =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "6285177623290";
 
 const HERO_CONTENT = {
   title: "Perjalanan nyaman dimulai dari unit yang pas buat kamu",

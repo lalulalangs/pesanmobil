@@ -82,7 +82,7 @@ export function Footer() {
   const { locale } = useLanguage();
 
   const whatsappNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") ?? "";
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "6285177623290";
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     locale === "id"
       ? "Halo pesanmobil.com, saya ingin bertanya tentang layanan sewa kendaraan."
