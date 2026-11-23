@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import alphardImg from "../../assets/armada/alphard.webp";
+import avanzaImg from "../../assets/armada/avanza.webp";
 import beatImg from "../../assets/armada/beat.webp";
 import camryImg from "../../assets/armada/camry.webp";
 import fortunerImg from "../../assets/armada/fortuner.webp";
@@ -145,6 +146,18 @@ export const FLEET_ITEMS: FleetItem[] = [
     priceIdr: "Rp 450.000",
     image: teriosImg,
   },
+  {
+    id: "toyota-avanza",
+    service: "lepas-kunci",
+    vehicleType: "mobil",
+    name: "Toyota Avanza",
+    category: "MPV",
+    transmission: "auto-manual",
+    seats: 7,
+    luggage: 2,
+    priceIdr: "Rp 400.000",
+    image: avanzaImg,
+  },
   // Lepas Kunci - Motor
   {
     id: "honda-beat",
@@ -204,6 +217,7 @@ export const FLEET_ITEMS: FleetItem[] = [
     seats: 7,
     luggage: 2,
     priceIdr: "Rp 650.000",
+    image: avanzaImg,
   },
   {
     id: "private-innova",
